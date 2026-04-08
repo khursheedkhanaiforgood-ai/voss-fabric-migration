@@ -16,6 +16,8 @@ from simulator.services.state_machine_service import StateMachineService
 from simulator.services.command_validator import CommandValidatorService
 from simulator.services.output_synthesis import OutputSynthesisService
 from simulator.services.student_guidance import StudentGuidanceService
+from simulator.services.explain_service import ExplainService
+from simulator.models.migration_step import THEMES
 from simulator.config import (
     EXOS_LAB, STANDARDS_EXOS, STANDARDS_FABRIC, SERVICES, SWITCHES, SPBM
 )
@@ -177,6 +179,10 @@ def init_session():
         st.session_state.last_feedback = None
     if "active_switch" not in st.session_state:
         st.session_state.active_switch = "SW1"
+    if "explain_svc" not in st.session_state:
+        st.session_state.explain_svc = ExplainService()
+    if "last_explanation" not in st.session_state:
+        st.session_state.last_explanation = None
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -324,19 +330,103 @@ def page_welcome():
 
     st.markdown("---")
 
-    # ── Standards Reference ────────────────────────────────────────────────────
-    with st.expander("📚 Full Standards Reference — EXOS Baseline + FabricEngine Target", expanded=False):
-        st.markdown("**Phase 1 — EXOS/SwitchEngine Baseline (what you already know)**")
-        exos_data = [[s["id"], s["title"], s["relevance"]] for s in STANDARDS_EXOS]
-        st.table({"Standard": [r[0] for r in exos_data],
-                  "Title": [r[1] for r in exos_data],
-                  "Relevance to Lab": [r[2] for r in exos_data]})
+    # ── Topology Diagram ───────────────────────────────────────────────────────
+    st.markdown("### Lab Topology")
+    st.markdown(
+        """
+        <div style="background:#0f172a;border-radius:8px;padding:20px 24px;
+                    font-family:monospace;font-size:0.82rem;color:#e2e8f0;
+                    line-height:1.7;margin-bottom:8px">
+        <div style="color:#60a5fa;font-weight:700;margin-bottom:6px">
+          FabricEngine Lab — Option A Resilient Fabric Core</div>
 
-        st.markdown("**Phase 2 — VOSS/FabricEngine Target (what you are learning)**")
-        fab_data = [[s["id"], s["title"], s["relevance"]] for s in STANDARDS_FABRIC]
-        st.table({"Standard": [r[0] for r in fab_data],
-                  "Title": [r[1] for r in fab_data],
-                  "Relevance to Lab": [r[2] for r in fab_data]})
+                        ┌─────────────────────────┐
+                        │   Internet (Quantum Fiber)│
+                        └──────────┬──────────────┘
+                                   │
+                          ┌────────▼────────┐
+                          │  192.168.1.1     │
+                          │  Quantum Fiber   │
+                          │     Modem        │
+                          └───┬─────────┬───┘
+                              │Port1    │Port1
+                     192.168.1.2        192.168.1.3
+               ┌──────────────┐        ┌──────────────┐
+               │  <span style="color:#60a5fa">SW1</span>  5320-16P   │        │  <span style="color:#a855f7">SW2</span>  5320-16P  │
+               │  0000.0000.0001│◄─NNI─►│  0000.0000.0002│
+               │  isis sys-id  │ P17-17 │  isis sys-id  │
+               └──────┬────────┘        └────────┬──────┘
+                      │Port3                      │Port3
+               ┌──────▼────────┐        ┌────────▼──────┐
+               │  <span style="color:#34d399">AP3000-1</span>      │        │  <span style="color:#34d399">AP3000-2</span>     │
+               │  FA Client     │        │  FA Client    │
+               │  LLDP-FA TLVs  │        │  LLDP-FA TLVs │
+               └──────┬────────┘        └────────┬──────┘
+              ┌───────┴───────┐         ┌─────────┴─────┐
+        <span style="color:#fbbf24">Alpha</span>→VLAN20    <span style="color:#fbbf24">Bravo</span>→VLAN30  <span style="color:#fbbf24">Delta</span>→VLAN50  <span style="color:#fbbf24">Gamma</span>→VLAN60
+        10.0.20.x/24  10.0.30.x/24  10.0.50.x/24  10.0.60.x/24
+          iPhone1       iPhone2       iPhone3       iPhone4
+
+        <div style="color:#64748b;font-size:0.75rem;margin-top:10px">
+        XIQ (cloud) ─── manages both switches + both APs via iqagent ───
+        NNI = IS-IS adjacency (RFC 6329) + I-SID services (802.1aq) + MAC-in-MAC (802.1ah)
+        FA = Fabric Attach (IEEE 802.1Qcj) — AP self-provisions VLAN→I-SID assignments
+        </div></div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    st.markdown("---")
+
+    # ── 7-Theme Overview ──────────────────────────────────────────────────────
+    st.markdown("### Migration Themes — 18 Steps in 7 Functional Groups")
+    theme_cols = st.columns(4)
+    theme_items = list(THEMES.items())
+    for i, (theme_key, meta) in enumerate(theme_items):
+        col = theme_cols[i % 4]
+        steps_str = ", ".join(str(s) for s in meta["steps"])
+        with col:
+            st.markdown(
+                f"""<div style="background:{meta['color']};border:1px solid {meta['border']};
+                            border-radius:6px;padding:10px 12px;margin-bottom:8px">
+                  <div style="color:{meta['border']};font-size:0.65rem;font-weight:700;
+                              letter-spacing:0.15em;text-transform:uppercase">{theme_key}</div>
+                  <div style="color:#e2e8f0;font-size:0.82rem;font-weight:600;margin:3px 0">{meta['label']}</div>
+                  <div style="color:#94a3b8;font-size:0.72rem">Steps: {steps_str}</div>
+                </div>""",
+                unsafe_allow_html=True,
+            )
+
+    st.markdown("---")
+
+    # ── Standards Reference ────────────────────────────────────────────────────
+    with st.expander("📚 Full Standards Reference — EXOS Baseline + FabricEngine Target (click to open)", expanded=False):
+        def render_standards_table(standards, phase_label):
+            st.markdown(f"**{phase_label}**")
+            rows = ""
+            for s in standards:
+                url = s.get("url", "")
+                link = (f'<a href="{url}" target="_blank" style="color:#326891;'
+                        f'font-weight:700;text-decoration:none">{s["id"]} ↗</a>'
+                        if url else f'<strong>{s["id"]}</strong>')
+                rows += (
+                    f'<tr><td style="white-space:nowrap;padding:6px 10px">{link}</td>'
+                    f'<td style="padding:6px 10px;color:#444">{s["title"]}</td>'
+                    f'<td style="padding:6px 10px;color:#555;font-size:0.82rem">{s["relevance"]}</td></tr>\n'
+                )
+            st.markdown(
+                f'<table style="width:100%;border-collapse:collapse;font-size:0.83rem">'
+                f'<thead><tr style="border-bottom:2px solid #ddd">'
+                f'<th style="text-align:left;padding:6px 10px">Standard</th>'
+                f'<th style="text-align:left;padding:6px 10px">Title</th>'
+                f'<th style="text-align:left;padding:6px 10px">Relevance to Lab</th>'
+                f'</tr></thead><tbody>{rows}</tbody></table>',
+                unsafe_allow_html=True,
+            )
+
+        render_standards_table(STANDARDS_EXOS, "Phase 1 — EXOS/SwitchEngine Baseline (what you already know)")
+        st.markdown("<br>", unsafe_allow_html=True)
+        render_standards_table(STANDARDS_FABRIC, "Phase 2 — VOSS/FabricEngine Target (what you are learning)")
 
     st.markdown("---")
 
@@ -489,21 +579,52 @@ def page_simulator():
             st.rerun()
 
     with main_col:
-        # ── Step card ──────────────────────────────────────────────────────────
+        # ── Step card with theme badge ─────────────────────────────────────────
+        theme_meta = THEMES.get(step.theme, {"label": step.theme, "color": "#1e3a5f", "border": "#326891"})
+        std_link = ""
+        if step.standard_url:
+            std_link = (f' &nbsp;<a href="{step.standard_url}" target="_blank" '
+                        f'style="font-size:0.72rem;color:{theme_meta["border"]};'
+                        f'text-decoration:none;border-bottom:1px dotted {theme_meta["border"]}">'
+                        f'↗ {step.standard.split("—")[0].strip()}</a>')
+
         st.markdown(
             f"""
             <div style="background:#F7F7F5;border:1px solid #E2E2E2;
-                        border-left:5px solid #326891;padding:14px 16px;border-radius:5px">
-              <span style="font-size:0.62rem;font-weight:700;letter-spacing:0.2em;
-                            text-transform:uppercase;color:#326891">
-                Step {step.number} / {step.phase.value}
-              </span>
-              <h4 style="margin:6px 0 4px 0;color:#111">{step.name}</h4>
-              <p style="color:#444;font-size:0.85rem;margin:0">{step.description}</p>
+                        border-left:5px solid {theme_meta['border']};padding:14px 16px;border-radius:5px">
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+                <span style="font-size:0.6rem;font-weight:700;letter-spacing:0.2em;
+                              text-transform:uppercase;color:{theme_meta['border']}">
+                  Step {step.number}/18 &nbsp;·&nbsp; {step.phase.value}
+                </span>
+                <span style="background:{theme_meta['color']};color:{theme_meta['border']};
+                             border:1px solid {theme_meta['border']};border-radius:4px;
+                             font-size:0.6rem;font-weight:700;letter-spacing:0.1em;
+                             text-transform:uppercase;padding:2px 8px">
+                  {step.theme}
+                </span>
+              </div>
+              <h4 style="margin:0 0 4px 0;color:#111">{step.name}</h4>
+              <p style="color:#444;font-size:0.85rem;margin:0 0 4px 0">{step.description}</p>
+              <div style="font-size:0.72rem;color:#888">{std_link}</div>
             </div>
             """,
             unsafe_allow_html=True,
         )
+
+        # ── Why? explanation ───────────────────────────────────────────────────
+        if step.why:
+            with st.expander("💡 Why does this work this way?", expanded=False):
+                st.markdown(
+                    f'<div style="color:#1e293b;font-size:0.88rem;line-height:1.7">{step.why}</div>',
+                    unsafe_allow_html=True,
+                )
+                if step.standard_url:
+                    st.markdown(
+                        f'📖 **Standard:** [{step.standard}]({step.standard_url})',
+                        unsafe_allow_html=False,
+                    )
+                st.caption("Type `explain` or `why [concept]` in the CLI box below for a deeper AI explanation.")
 
         # ══════════════════════════════════════════════════════════════════════
         # ACTION REQUIRED — always first, always visible
@@ -579,7 +700,7 @@ def page_simulator():
                   </div>
                   {cmd_rows}
                   <div style="color:#64748b;font-size:0.75rem;margin-top:10px">
-                    ▶ = type next · ✅ = done · you can also type: show &lt;cmd&gt; · hint · sw1 / sw2
+                    ▶ = type next · ✅ = done · also: <span style="color:#60a5fa">explain</span> / <span style="color:#60a5fa">why [concept]</span> · show &lt;cmd&gt; · hint · sw1 / sw2
                   </div>
                 </div>
                 """,
@@ -607,6 +728,15 @@ def page_simulator():
                 if lower in ("sw1", "sw2"):
                     st.session_state.active_switch = lower.upper()
                     st.session_state.last_feedback = None
+                    st.rerun()
+
+                elif lower in ("explain", "why") or lower.startswith("explain ") or lower.startswith("why "):
+                    explain_svc: ExplainService = st.session_state.explain_svc
+                    with st.spinner("Thinking..."):
+                        explanation = explain_svc.explain(raw, step, sw_id)
+                    st.session_state.last_explanation = explanation
+                    st.session_state.last_feedback = None
+                    st.session_state.show_output = None
                     st.rerun()
 
                 elif lower.startswith("show "):
@@ -681,6 +811,25 @@ def page_simulator():
                     f'{st.session_state.show_output}</div>',
                     unsafe_allow_html=True,
                 )
+
+            # ── AI Explanation ─────────────────────────────────────────────────
+            if st.session_state.last_explanation:
+                st.markdown(
+                    f"""<div style="background:#0f2027;border-left:4px solid #60a5fa;
+                                   border-radius:6px;padding:14px 16px;margin-top:8px">
+                      <div style="color:#60a5fa;font-size:0.65rem;font-weight:700;
+                                  letter-spacing:0.2em;text-transform:uppercase;margin-bottom:8px">
+                        💡 AI Explanation
+                      </div>
+                      <div style="color:#e2e8f0;font-size:0.88rem;line-height:1.7">
+                        {st.session_state.last_explanation}
+                      </div>
+                    </div>""",
+                    unsafe_allow_html=True,
+                )
+                if st.button("✕ Clear explanation", key="clear_exp"):
+                    st.session_state.last_explanation = None
+                    st.rerun()
 
         # ── EXOS parallel ──────────────────────────────────────────────────────
         with st.expander("📖 EXOS→VOSS Learning Link", expanded=False):
