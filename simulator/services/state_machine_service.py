@@ -23,10 +23,10 @@ class StepProgress:
 
     @property
     def complete(self) -> bool:
-        if self.skipped:
+        if self.skipped or self.confirmed:
             return True
         if self.total_commands == 0:
-            return self.confirmed
+            return False
         return len(self.completed_indices) >= self.total_commands
 
     @property

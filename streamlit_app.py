@@ -332,49 +332,37 @@ def page_welcome():
 
     # ── Topology Diagram ───────────────────────────────────────────────────────
     st.markdown("### Lab Topology")
-    st.markdown(
-        """
-        <div style="background:#0f172a;border-radius:8px;padding:20px 24px;
-                    font-family:monospace;font-size:0.82rem;color:#e2e8f0;
-                    line-height:1.7;margin-bottom:8px">
-        <div style="color:#60a5fa;font-weight:700;margin-bottom:6px">
-          FabricEngine Lab — Option A Resilient Fabric Core</div>
+    topology_text = """\
+FabricEngine Lab — Option A Resilient Fabric Core
+══════════════════════════════════════════════════
 
-                        ┌─────────────────────────┐
-                        │   Internet (Quantum Fiber)│
-                        └──────────┬──────────────┘
-                                   │
-                          ┌────────▼────────┐
-                          │  192.168.1.1     │
-                          │  Quantum Fiber   │
-                          │     Modem        │
-                          └───┬─────────┬───┘
-                              │Port1    │Port1
-                     192.168.1.2        192.168.1.3
-               ┌──────────────┐        ┌──────────────┐
-               │  <span style="color:#60a5fa">SW1</span>  5320-16P   │        │  <span style="color:#a855f7">SW2</span>  5320-16P  │
-               │  0000.0000.0001│◄─NNI─►│  0000.0000.0002│
-               │  isis sys-id  │ P17-17 │  isis sys-id  │
-               └──────┬────────┘        └────────┬──────┘
-                      │Port3                      │Port3
-               ┌──────▼────────┐        ┌────────▼──────┐
-               │  <span style="color:#34d399">AP3000-1</span>      │        │  <span style="color:#34d399">AP3000-2</span>     │
-               │  FA Client     │        │  FA Client    │
-               │  LLDP-FA TLVs  │        │  LLDP-FA TLVs │
-               └──────┬────────┘        └────────┬──────┘
-              ┌───────┴───────┐         ┌─────────┴─────┐
-        <span style="color:#fbbf24">Alpha</span>→VLAN20    <span style="color:#fbbf24">Bravo</span>→VLAN30  <span style="color:#fbbf24">Delta</span>→VLAN50  <span style="color:#fbbf24">Gamma</span>→VLAN60
-        10.0.20.x/24  10.0.30.x/24  10.0.50.x/24  10.0.60.x/24
-          iPhone1       iPhone2       iPhone3       iPhone4
+              [ Internet — Quantum Fiber ISP ]
+                           |
+                   192.168.1.1
+               [ Quantum Fiber Modem ]
+                  /               \\
+           Port1 /                 \\ Port1
+      192.168.1.2                   192.168.1.3
+  ┌────────────────┐           ┌────────────────┐
+  │  SW1 5320-16P  │           │  SW2 5320-16P  │
+  │ sys-id 0001    │◄──NNI────►│ sys-id 0002    │
+  │ nick: 0.00.01  │  P17-P17  │ nick: 0.00.02  │
+  └───────┬────────┘  IS-IS/   └────────┬───────┘
+          │ Port3     I-SIDs            │ Port3
+  ┌───────▼────────┐  (802.1aq) ┌───────▼───────┐
+  │  AP3000-1      │            │  AP3000-2     │
+  │  FA Client     │            │  FA Client    │
+  │  LLDP-FA TLVs  │            │  LLDP-FA TLVs│
+  └───────┬────────┘            └───────┬───────┘
+    Alpha VLAN20    Bravo VLAN30   Delta VLAN50   Gamma VLAN60
+    10.0.20.x/24   10.0.30.x/24   10.0.50.x/24   10.0.60.x/24
+      iPhone 1        iPhone 2       iPhone 3       iPhone 4
 
-        <div style="color:#64748b;font-size:0.75rem;margin-top:10px">
-        XIQ (cloud) ─── manages both switches + both APs via iqagent ───
-        NNI = IS-IS adjacency (RFC 6329) + I-SID services (802.1aq) + MAC-in-MAC (802.1ah)
-        FA = Fabric Attach (IEEE 802.1Qcj) — AP self-provisions VLAN→I-SID assignments
-        </div></div>
-        """,
-        unsafe_allow_html=True,
-    )
+XIQ Cloud ─────── iqagent manages both switches + both APs ──────
+NNI: IS-IS adjacency (RFC 6329) + I-SID E-LAN services (802.1aq) + MAC-in-MAC (802.1ah)
+FA:  Fabric Attach (IEEE 802.1Qcj) — AP auto-provisions VLAN/I-SID, no manual trunk config\
+"""
+    st.code(topology_text, language=None)
 
     st.markdown("---")
 
@@ -396,6 +384,50 @@ def page_welcome():
                 </div>""",
                 unsafe_allow_html=True,
             )
+
+    st.markdown("---")
+
+    # ── Cisco-EN → VOSS Migration Mapping ─────────────────────────────────────
+    with st.expander("🔀 Migration Mapping — Cisco-EN CLI Bins → VOSS Themes", expanded=False):
+        st.markdown(
+            "The same SOA pattern used in the **Cisco→EXOS CLI Agent** (9 bins) applies here. "
+            "These 7 VOSS themes map to the equivalent Cisco-EN functional bins:"
+        )
+        mapping_rows = [
+            ("OS-CONVERT",   "Steps 1–3",  "ONBOARD",         "Factory reset, OS switch, ZTP re-adoption"),
+            ("ISIS-CONTROL", "Steps 4–6",  "FAB-SDN",         "IS-IS router, SPBM instance, enable — fabric control plane"),
+            ("NNI-LINK",     "Step 7",     "IF-PHYS",         "NNI backbone port — ISIS on port, point-to-point, MTU"),
+            ("VLAN-ISID",    "Steps 8–9",  "L2-SEG + FAB-SDN","VLAN creation + I-SID E-LAN service bindings"),
+            ("ANYCAST-DHCP", "Steps 10–11","L3-VIRT",         "Anycast gateways (replaces VRRP) + DHCP server"),
+            ("ACCESS-FA",    "Steps 12–14","FAB-SDN + L3-VIRT","Fabric Attach, Internet exit, IP shortcuts"),
+            ("SAVE-VERIFY",  "Steps 15–18","MGMT-OPS + DIAG-LOG","Save config, verify ISIS/FA/E2E"),
+        ]
+        hdr = (
+            '<table style="width:100%;border-collapse:collapse;font-size:0.82rem">'
+            '<thead><tr style="border-bottom:2px solid #ddd;background:#f8f8f8">'
+            '<th style="padding:7px 10px;text-align:left">VOSS Theme</th>'
+            '<th style="padding:7px 10px;text-align:left">Steps</th>'
+            '<th style="padding:7px 10px;text-align:left">Cisco-EN Bin(s)</th>'
+            '<th style="padding:7px 10px;text-align:left">What it covers</th>'
+            '</tr></thead><tbody>'
+        )
+        body = ""
+        for voss, steps, cisco, desc in mapping_rows:
+            meta = THEMES.get(voss, {})
+            color = meta.get("border", "#326891")
+            body += (
+                f'<tr style="border-bottom:1px solid #eee">'
+                f'<td style="padding:6px 10px;font-weight:700;color:{color}">{voss}</td>'
+                f'<td style="padding:6px 10px;color:#555">{steps}</td>'
+                f'<td style="padding:6px 10px;font-family:monospace;font-size:0.78rem;color:#1a7a3a">{cisco}</td>'
+                f'<td style="padding:6px 10px;color:#444">{desc}</td>'
+                f'</tr>'
+            )
+        st.markdown(hdr + body + "</tbody></table>", unsafe_allow_html=True)
+        st.caption(
+            "Cisco-EN CLI Agent: cisco-en-cli-agent-production-fbf7.up.railway.app  ·  "
+            "9 bins: ONBOARD · SEC-ID · SYS-INFO · IF-PHYS · L2-SEG · FAB-SDN · L3-VIRT · DIAG-LOG · MGMT-OPS"
+        )
 
     st.markdown("---")
 
@@ -563,6 +595,9 @@ def page_simulator():
     tracker_col, main_col = st.columns([1, 3])
 
     with tracker_col:
+        if st.button("← Landing Page", use_container_width=True, type="secondary"):
+            st.session_state.page = "welcome"
+            st.rerun()
         st.markdown("**Migration Steps**")
         render_step_tracker()
         st.markdown("---")
@@ -652,7 +687,7 @@ def page_simulator():
                 "✅  Confirm & Continue →",
                 use_container_width=True,
                 type="primary",
-                key="confirm_narrative",
+                key=f"confirm_narrative_{step.number}",
             ):
                 for sid in step.applies_to:
                     sm.mark_confirmed(sid)
@@ -660,12 +695,38 @@ def page_simulator():
                     sm.advance()
                     st.session_state.show_output = None
                     st.session_state.last_feedback = None
+                    st.session_state.last_explanation = None
                     if not sm.is_complete():
                         next_step = sm.current_step
                         if "SW1" in next_step.applies_to:
                             st.session_state.active_switch = "SW1"
                     else:
                         st.session_state.page = "export"
+                st.rerun()
+
+            # Narrative steps also allow explain/why/show (no config commands)
+            st.markdown("---")
+            st.caption("Ask a question about this step:")
+            with st.form(f"narrative_cli_{step.number}", clear_on_submit=True):
+                narr_input = st.text_input(
+                    "Ask",
+                    placeholder="explain  ·  why  ·  why [concept]  ·  show isis adjacency",
+                    label_visibility="collapsed",
+                )
+                narr_submit = st.form_submit_button("Ask →", use_container_width=True)
+            if narr_submit and narr_input:
+                raw = narr_input.strip()
+                lower = raw.lower()
+                if lower.startswith("show "):
+                    out = OutputSynthesisService(lab).render(lower, sw_id)
+                    st.session_state.show_output = out
+                    st.session_state.last_explanation = None
+                else:
+                    explain_svc: ExplainService = st.session_state.explain_svc
+                    with st.spinner("Thinking..."):
+                        explanation = explain_svc.explain(raw, step, sw_id)
+                    st.session_state.last_explanation = explanation
+                    st.session_state.show_output = None
                 st.rerun()
         else:
             expected_cmds = step.expected_commands.get(sw_id, [])
@@ -803,33 +864,33 @@ def page_simulator():
                 else:
                     st.error(f"✗ {r.feedback}")
 
-            # ── Show output ────────────────────────────────────────────────────
-            if st.session_state.show_output:
-                st.markdown(
-                    f'<div style="background:#1a1a2e;color:#e2e8f0;font-family:monospace;'
-                    f'font-size:0.82rem;padding:14px;border-radius:5px;white-space:pre-wrap">'
-                    f'{st.session_state.show_output}</div>',
-                    unsafe_allow_html=True,
-                )
+        # ── Show output (available for all steps) ─────────────────────────────
+        if st.session_state.show_output:
+            st.markdown(
+                f'<div style="background:#1a1a2e;color:#e2e8f0;font-family:monospace;'
+                f'font-size:0.82rem;padding:14px;border-radius:5px;white-space:pre-wrap">'
+                f'{st.session_state.show_output}</div>',
+                unsafe_allow_html=True,
+            )
 
-            # ── AI Explanation ─────────────────────────────────────────────────
-            if st.session_state.last_explanation:
-                st.markdown(
-                    f"""<div style="background:#0f2027;border-left:4px solid #60a5fa;
-                                   border-radius:6px;padding:14px 16px;margin-top:8px">
-                      <div style="color:#60a5fa;font-size:0.65rem;font-weight:700;
-                                  letter-spacing:0.2em;text-transform:uppercase;margin-bottom:8px">
-                        💡 AI Explanation
-                      </div>
-                      <div style="color:#e2e8f0;font-size:0.88rem;line-height:1.7">
-                        {st.session_state.last_explanation}
-                      </div>
-                    </div>""",
-                    unsafe_allow_html=True,
-                )
-                if st.button("✕ Clear explanation", key="clear_exp"):
-                    st.session_state.last_explanation = None
-                    st.rerun()
+        # ── AI Explanation (available for all steps) ───────────────────────────
+        if st.session_state.last_explanation:
+            st.markdown(
+                f"""<div style="background:#0f2027;border-left:4px solid #60a5fa;
+                               border-radius:6px;padding:14px 16px;margin-top:8px">
+                  <div style="color:#60a5fa;font-size:0.65rem;font-weight:700;
+                              letter-spacing:0.2em;text-transform:uppercase;margin-bottom:8px">
+                    💡 AI Explanation
+                  </div>
+                  <div style="color:#e2e8f0;font-size:0.88rem;line-height:1.7">
+                    {st.session_state.last_explanation}
+                  </div>
+                </div>""",
+                unsafe_allow_html=True,
+            )
+            if st.button("✕ Clear explanation", key="clear_exp"):
+                st.session_state.last_explanation = None
+                st.rerun()
 
         # ── EXOS parallel ──────────────────────────────────────────────────────
         with st.expander("📖 EXOS→VOSS Learning Link", expanded=False):
