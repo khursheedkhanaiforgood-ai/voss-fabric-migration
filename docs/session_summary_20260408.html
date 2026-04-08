@@ -12,6 +12,7 @@
     --blue: #58a6ff; --green: #3fb950; --yellow: #d29922;
     --red: #f85149; --purple: #bc8cff; --orange: #ffa657;
     --nyt: #326891; --nyt-light: #4a9bc7;
+    --pink: #e879f9;
   }
   body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
          background: var(--bg); color: var(--text); line-height: 1.6; }
@@ -20,6 +21,10 @@
   code { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 0.82em;
          background: var(--surface2); color: var(--orange); padding: 2px 6px;
          border-radius: 4px; border: 1px solid var(--border); }
+  pre { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 0.82em;
+        background: var(--surface2); color: var(--orange); padding: 14px 18px;
+        border-radius: 6px; border: 1px solid var(--border); overflow-x: auto;
+        line-height: 1.7; margin: 12px 0; }
 
   /* ── NAV ── */
   nav { position: sticky; top: 0; z-index: 100; background: #0d1117ee;
@@ -29,7 +34,6 @@
           text-transform: uppercase; letter-spacing: 0.08em; padding: 14px 16px;
           border-bottom: 2px solid transparent; white-space: nowrap; }
   nav a:hover { color: var(--text); text-decoration: none; }
-  nav a.active { color: var(--blue); border-bottom-color: var(--blue); }
   .nav-logo { color: var(--text); font-weight: 700; font-size: 0.9rem;
               padding: 14px 20px 14px 0; border-right: 1px solid var(--border);
               margin-right: 8px; white-space: nowrap; }
@@ -49,111 +53,85 @@
                border-radius: 20px; padding: 4px 14px; font-size: 0.75rem; color: var(--muted); }
   .meta-pill span { color: var(--text); font-weight: 600; }
 
-  /* ── SECTION ── */
-  .section { margin-bottom: 56px; }
-  .section-label { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.2em;
-                   text-transform: uppercase; color: var(--nyt-light);
-                   border-bottom: 2px solid var(--nyt); padding-bottom: 6px;
-                   margin-bottom: 24px; display: block; }
+  /* ── SECTIONS ── */
+  section { margin-bottom: 56px; }
+  h2 { font-size: 1.4rem; font-weight: 700; color: var(--text);
+       border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 20px; }
+  h3 { font-size: 1.05rem; font-weight: 700; color: var(--blue); margin: 24px 0 10px; }
+  p { color: var(--muted); margin-bottom: 12px; line-height: 1.7; }
+  ul, ol { color: var(--muted); padding-left: 22px; margin-bottom: 12px; }
+  li { margin-bottom: 6px; line-height: 1.6; }
+  li strong { color: var(--text); }
 
   /* ── CARDS ── */
-  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
-  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
-          padding: 20px; }
-  .card-label { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.15em;
-                text-transform: uppercase; margin-bottom: 8px; }
-  .card h3 { font-size: 1.0rem; color: var(--text); margin-bottom: 10px; }
-  .card p, .card li { font-size: 0.84rem; color: var(--muted); line-height: 1.65; }
-  .card ul { padding-left: 16px; }
-  .card .status { display: inline-block; font-size: 0.65rem; font-weight: 700;
-                  padding: 2px 8px; border-radius: 3px; margin-bottom: 8px; }
-  .status-done  { background: #1a3a1a; color: var(--green); border: 1px solid var(--green); }
-  .status-pend  { background: #3a2a00; color: var(--yellow); border: 1px solid var(--yellow); }
-  .status-live  { background: #1a2a3a; color: var(--blue); border: 1px solid var(--blue); }
+  .card { background: var(--surface); border: 1px solid var(--border);
+          border-radius: 8px; padding: 18px 20px; margin-bottom: 14px; }
+  .card-title { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.15em;
+                text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+  .card h3 { font-size: 1rem; color: var(--text); margin: 0 0 8px; }
+  .card p { margin: 0; font-size: 0.88rem; }
+
+  /* ── STATUS BADGES ── */
+  .badge { display: inline-block; padding: 2px 10px; border-radius: 20px;
+           font-size: 0.72rem; font-weight: 700; letter-spacing: 0.05em;
+           text-transform: uppercase; margin-right: 6px; }
+  .badge-done { background: #1a3a2a; color: var(--green); border: 1px solid var(--green); }
+  .badge-pending { background: #2a1f00; color: var(--yellow); border: 1px solid var(--yellow); }
+  .badge-blocked { background: #2a0d0d; color: var(--red); border: 1px solid var(--red); }
+  .badge-branch { background: #1a1040; color: var(--purple); border: 1px solid var(--purple); }
 
   /* ── TABLES ── */
-  table { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
-  th { text-align: left; padding: 10px 14px; background: var(--surface2);
-       color: var(--muted); font-size: 0.72rem; text-transform: uppercase;
-       letter-spacing: 0.06em; border: 1px solid var(--border); }
-  td { padding: 9px 14px; border: 1px solid var(--border); color: var(--muted); }
-  td:first-child { color: var(--text); font-weight: 600; }
-  tr:hover td { background: var(--surface); }
+  table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-bottom: 16px; }
+  th { text-align: left; padding: 8px 12px; border-bottom: 2px solid var(--border);
+       color: var(--muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; }
+  td { padding: 8px 12px; border-bottom: 1px solid var(--border); color: var(--muted); vertical-align: top; }
+  td:first-child { color: var(--text); font-weight: 600; white-space: nowrap; }
+  tr:last-child td { border-bottom: none; }
 
-  /* ── CODE BLOCKS ── */
-  .codeblock { background: var(--surface); border: 1px solid var(--border);
-               border-radius: 8px; padding: 16px 18px; overflow-x: auto; margin: 12px 0; }
-  .codeblock code { background: none; border: none; padding: 0; font-size: 0.82rem;
-                    color: var(--text); white-space: pre; display: block; }
-  .cb-label { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.15em;
-              text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+  /* ── CALL-OUTS ── */
+  .callout { border-left: 4px solid var(--border); padding: 14px 18px;
+             border-radius: 0 6px 6px 0; margin-bottom: 16px; }
+  .callout-blue { border-color: var(--blue); background: #0d1f35; }
+  .callout-green { border-color: var(--green); background: #0d2018; }
+  .callout-yellow { border-color: var(--yellow); background: #201800; }
+  .callout-red { border-color: var(--red); background: #200d0d; }
+  .callout-purple { border-color: var(--pink); background: #1a0a2e; }
+  .callout p { margin: 0; font-size: 0.88rem; }
+  .callout strong { color: var(--text); }
 
-  /* ── PLANE ROWS ── */
-  .plane-row { border-radius: 6px; padding: 14px 16px; margin-bottom: 10px; }
-  .plane-mgmt { background: #0d1f2d; border-left: 4px solid var(--nyt); }
-  .plane-ctrl  { background: #0d2014; border-left: 4px solid var(--green); }
-  .plane-data  { background: #1a0d2d; border-left: 4px solid var(--purple); }
-  .plane-label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
-                 letter-spacing: 0.12em; margin-bottom: 6px; }
-  .plane-mgmt .plane-label { color: var(--nyt-light); }
-  .plane-ctrl  .plane-label { color: var(--green); }
-  .plane-data  .plane-label { color: var(--purple); }
-  .plane-row p { font-size: 0.83rem; color: var(--muted); }
+  /* ── ACCOMPLISHED GRID ── */
+  .accom-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+                gap: 14px; margin-top: 16px; }
+  .accom-item { background: var(--surface); border: 1px solid var(--border);
+                border-radius: 8px; padding: 14px 16px; }
+  .accom-num { font-size: 1.6rem; font-weight: 700; color: var(--blue); line-height: 1; margin-bottom: 6px; }
+  .accom-label { font-size: 0.82rem; color: var(--text); font-weight: 600; margin-bottom: 4px; }
+  .accom-sub { font-size: 0.76rem; color: var(--muted); }
 
-  /* ── TIMELINE ── */
-  .timeline { position: relative; padding-left: 28px; }
-  .timeline::before { content: ''; position: absolute; left: 8px; top: 0; bottom: 0;
-                      width: 2px; background: var(--border); }
-  .tl-item { position: relative; margin-bottom: 28px; }
-  .tl-dot { position: absolute; left: -24px; top: 4px; width: 12px; height: 12px;
-             border-radius: 50%; border: 2px solid; }
-  .tl-dot.done   { background: var(--green); border-color: var(--green); }
-  .tl-dot.live   { background: var(--blue);  border-color: var(--blue); }
-  .tl-dot.pend   { background: var(--bg);    border-color: var(--yellow); }
-  .tl-time { font-size: 0.68rem; color: var(--muted); margin-bottom: 3px; }
-  .tl-title { font-size: 0.9rem; font-weight: 700; color: var(--text); margin-bottom: 4px; }
-  .tl-body  { font-size: 0.82rem; color: var(--muted); line-height: 1.6; }
+  /* ── THEME BINS ── */
+  .bins { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; margin: 12px 0; }
+  .bin { border-radius: 6px; padding: 10px 14px; }
+  .bin-key { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
+  .bin-label { font-size: 0.85rem; font-weight: 600; color: #e2e8f0; margin: 3px 0; }
+  .bin-steps { font-size: 0.72rem; color: #94a3b8; }
 
-  /* ── STANDARDS ── */
-  .std-badge { display: inline-block; font-family: monospace; font-size: 0.75rem;
-               font-weight: 700; padding: 2px 8px; border-radius: 3px; margin-right: 6px; }
-  .std-exos   { background: #1a2d1a; color: var(--green); }
-  .std-fabric { background: #1a1a3a; color: var(--blue); }
-
-  /* ── DECISION TABLE ── */
-  .decision-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
-  @media (max-width: 700px) { .decision-grid { grid-template-columns: 1fr; } }
-  .dec-card { background: var(--surface); border: 1px solid var(--border);
-              border-radius: 6px; padding: 14px; }
-  .dec-title { font-size: 0.75rem; font-weight: 700; color: var(--muted);
-               text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; }
-  .dec-s1 { font-size: 0.85rem; color: var(--green); font-weight: 600; }
-  .dec-s2 { font-size: 0.82rem; color: var(--yellow); margin-top: 4px; }
-
-  .url-row { display: flex; align-items: baseline; gap: 12px; padding: 8px 0;
-             border-bottom: 1px solid var(--border); }
-  .url-label { font-size: 0.75rem; color: var(--muted); min-width: 180px; flex-shrink: 0; }
-  .url-row a { font-size: 0.83rem; word-break: break-all; }
-
-  .divider { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
-  .tag { display: inline-block; background: var(--surface2); border: 1px solid var(--border);
-         border-radius: 4px; padding: 1px 8px; font-size: 0.72rem; color: var(--muted);
-         margin: 2px; }
+  /* ── FOOTER ── */
+  footer { border-top: 1px solid var(--border); padding-top: 24px; margin-top: 80px;
+           color: var(--muted); font-size: 0.8rem; text-align: center; }
 </style>
 </head>
 <body>
 
 <nav>
-  <span class="nav-logo">✈️ FabricEngine Sim</span>
-  <a href="#accomplished" class="active">Accomplished</a>
+  <span class="nav-logo">FabricEngine Simulator</span>
+  <a href="#accomplished">Accomplished</a>
   <a href="#architecture">Architecture</a>
-  <a href="#standards">Standards</a>
-  <a href="#decisions">Decisions</a>
-  <a href="#planes">3-Plane View</a>
+  <a href="#sprint-status">Sprint Status</a>
+  <a href="#theory">Theory Added</a>
+  <a href="#files">Files</a>
   <a href="#urls">URLs</a>
   <a href="#credentials">Credentials</a>
   <a href="#commands">Commands</a>
-  <a href="#files">Files</a>
   <a href="#pending">Pending</a>
 </nav>
 
@@ -162,484 +140,416 @@
   <!-- HERO -->
   <div class="hero">
     <div class="hero-eyebrow">Extreme Networks Lab Series · April 8, 2026 · End-of-Day Summary</div>
-    <h1>FabricEngine Flight Simulator<br>— Design &amp; Sprint 1 Complete</h1>
+    <h1>FabricEngine Flight Simulator<br>Full Session Report</h1>
     <p class="hero-sub">
-      A full-day session designing and building a professional-grade simulation environment
-      for EXOS/SwitchEngine → VOSS/FabricEngine migration. Architecture developed jointly.
-      Sprint 1 (Streamlit) is live. Sprint 2 (React + FastAPI) is planned.
+      EXOS/SwitchEngine → VOSS/FabricEngine Digital Twin Simulator — Sprint 1 built.
+      SOA Python architecture, 18-step FSM, 7 functional themes, ExplainService (Claude API),
+      3-plane cockpit view. Railway deployment required to close Sprint 1.
     </p>
     <div class="hero-meta">
-      <div class="meta-pill">Date: <span>April 8, 2026</span></div>
-      <div class="meta-pill">Repo: <span>voss-fabric-migration</span></div>
-      <div class="meta-pill">Simulator: <span>Sprint 1 ✅ Live</span></div>
-      <div class="meta-pill">Tests: <span>16/16 passing</span></div>
-      <div class="meta-pill">Standards: <span>20 (10 EXOS + 10 Fabric)</span></div>
+      <div class="meta-pill">Date <span>April 8, 2026</span></div>
+      <div class="meta-pill">Sprint <span>1 — Streamlit (BUILT, deploy pending)</span></div>
+      <div class="meta-pill">Repo <span>voss-fabric-migration</span></div>
+      <div class="meta-pill">Switches <span>2× 5320-16P-2MXT-2X</span></div>
+      <div class="meta-pill">APs <span>2× AP3000</span></div>
     </div>
   </div>
 
   <!-- ACCOMPLISHED -->
-  <div class="section" id="accomplished">
-    <span class="section-label">Accomplished Today</span>
-    <div class="timeline">
+  <section id="accomplished">
+    <h2>Accomplished — Full Session</h2>
 
-      <div class="tl-item">
-        <div class="tl-dot done"></div>
-        <div class="tl-time">Earlier — EXOS Lab Baseline</div>
-        <div class="tl-title">5320 Onboarding Lab — EXOS Deployment Complete</div>
-        <div class="tl-body">
-          Two 5320-16P-2MXT-2X switches + two AP3000s. Four SSIDs (Alpha/Bravo/Delta/Gamma),
-          VLANs 10/20/30/50/60, DHCP, static routing, Quantum Fiber internet. Verified E2E Apr 7–8.
-          Published on GitHub Pages with NYT-themed session logs.
-        </div>
+    <div class="accom-grid">
+      <div class="accom-item">
+        <div class="accom-num">1</div>
+        <div class="accom-label">FabricEngine Flight Simulator — Initial Build</div>
+        <div class="accom-sub">SOA Python: 7 services, 18-step FSM, Streamlit UI, export engine (CLI scripts + XIQ JSON)</div>
       </div>
-
-      <div class="tl-item">
-        <div class="tl-dot done"></div>
-        <div class="tl-time">April 8 — Morning</div>
-        <div class="tl-title">Google AI Dialogue Studied + Stored in Research</div>
-        <div class="tl-body">
-          Full EXOS→VOSS dialogue analysed. Key extractions: three-plane architecture
-          (Management/Control/Data), E2E traffic flow comparison, IP Shortcuts vs static routing,
-          Fabric Attach auto-provisioning, Option A Resilient Fabric Core design.
-          Stored in <code>research/</code> folder + memory.
-        </div>
+      <div class="accom-item">
+        <div class="accom-num">2</div>
+        <div class="accom-label">7 Functional Themes (Cisco-EN Pattern)</div>
+        <div class="accom-sub">OS-CONVERT · ISIS-CONTROL · NNI-LINK · VLAN-ISID · ANYCAST-DHCP · ACCESS-FA · SAVE-VERIFY</div>
       </div>
-
-      <div class="tl-item">
-        <div class="tl-dot done"></div>
-        <div class="tl-time">April 8 — Midday</div>
-        <div class="tl-title">VOSS Project Created + Digital Twin SOA Designed</div>
-        <div class="tl-body">
-          New GitHub repo <code>voss-fabric-migration</code> created with full Claude Code anatomy
-          (.claude/agents, .claude/settings.json, CLAUDE.md). Service-Oriented Architecture
-          designed: 7 services. 18-step migration FSM built. 16/16 tests passing.
-        </div>
+      <div class="accom-item">
+        <div class="accom-num">3</div>
+        <div class="accom-label">ExplainService — AI Explanations</div>
+        <div class="accom-sub">Claude API (claude-sonnet-4-6) with step metadata as RAG context. Triggers on "explain" / "why" CLI command. Fallback to built-in why text.</div>
       </div>
-
-      <div class="tl-item">
-        <div class="tl-dot done"></div>
-        <div class="tl-time">April 8 — Afternoon</div>
-        <div class="tl-title">Standards Consolidated — EXOS + Fabric (20 total)</div>
-        <div class="tl-body">
-          All IEEE standards and RFCs from both the EXOS baseline and VOSS/FabricEngine target
-          consolidated into <code>config.py</code>: <code>STANDARDS_EXOS</code> (10) +
-          <code>STANDARDS_FABRIC</code> (10) + <code>STANDARDS_ALL</code> combined view.
-          Displayed in simulator welcome screen and session reports.
-        </div>
+      <div class="accom-item">
+        <div class="accom-num">4</div>
+        <div class="accom-label">Navigation UX</div>
+        <div class="accom-sub">Clickable 18 steps in sidebar, prev/next buttons, live Fabric Status Bar pinned to top, phase dividers, jump_to_step()</div>
       </div>
-
-      <div class="tl-item">
-        <div class="tl-dot done"></div>
-        <div class="tl-time">April 8 — Late Afternoon</div>
-        <div class="tl-title">Architecture Decisions Made Jointly</div>
-        <div class="tl-body">
-          Sprint roadmap defined: Sprint 1 = Streamlit + in-memory + admin/Extreme01!! +
-          on-demand AI. Sprint 2 = React + persistence. "Flight simulator" analogy established
-          as the guiding design principle. Outputs must be production-deployable to real hardware.
-        </div>
+      <div class="accom-item">
+        <div class="accom-num">5</div>
+        <div class="accom-label">Bug Fixes</div>
+        <div class="accom-sub">Confirm &amp; Continue stuck (StepProgress.complete fix), topology HTML rendering (→ st.code ASCII), confirm button key collision, auth persist on return</div>
       </div>
-
-      <div class="tl-item">
-        <div class="tl-dot live"></div>
-        <div class="tl-time">April 8 — Evening</div>
-        <div class="tl-title">Sprint 1 Built — FabricEngine Flight Simulator Live</div>
-        <div class="tl-body">
-          Streamlit app with 3-plane cockpit view, 18-step guided workflow, CLI validator,
-          show-command output synthesis, 3-tier hints, export engine (CLI scripts + XIQ JSON +
-          deployment checklist). Running at <code>http://localhost:8502</code>.
-          Railway deploy config ready.
-        </div>
+      <div class="accom-item">
+        <div class="accom-num">6</div>
+        <div class="accom-label">3-Plane Cockpit Per Step</div>
+        <div class="accom-sub">Management (XIQ) · Control (IS-IS/SPBM/FA) · Data (MAC-in-MAC/I-SID). All 18 steps have full 3-plane context table in STEP_PLANE_CONTEXT</div>
       </div>
-
-      <div class="tl-item">
-        <div class="tl-dot done"></div>
-        <div class="tl-time">April 8 — Throughout</div>
-        <div class="tl-title">Global CLAUDE.md Updated — All Docx Items Incorporated</div>
-        <div class="tl-body">
-          All items from user's docx added: headless/CI mode (<code>claude -p "query" --output-format json</code>),
-          Claude mobile app, Cowork Dispatch, Chrome extension, Projects caching, ninadurann repo,
-          GeekWire article. CLAUDE.md at 160 lines (under 200 cap).
-        </div>
+      <div class="accom-item">
+        <div class="accom-num">7</div>
+        <div class="accom-label">Standards — Clickable IEEE/RFC Links</div>
+        <div class="accom-sub">All 20 standards (EXOS + VOSS) have url field added to config.py. Standards table renders clickable ↗ links to ieee802.org / rfc-editor.org</div>
       </div>
-
+      <div class="accom-item">
+        <div class="accom-num">8</div>
+        <div class="accom-label">Theory Section — Welcome Page</div>
+        <div class="accom-sub">"What Is This Migration", phone→DHCP data path table, IS-IS/SPBM plain English, XIQ role (iqagent + ZTP+ + XIQ vs CLI boundary), 18-step story</div>
+      </div>
+      <div class="accom-item">
+        <div class="accom-num">9</div>
+        <div class="accom-label">Socratic Mode — feature branch</div>
+        <div class="accom-sub">Full implementation (hide answers, dialogue log, user-script export, diff view). Merged then reverted. Preserved in feature/socratic-mode for Sprint 2.</div>
+      </div>
+      <div class="accom-item">
+        <div class="accom-num">10</div>
+        <div class="accom-label">Railway + Procfile</div>
+        <div class="accom-sub">railway.json + Procfile committed to main. Deploy steps documented. Railway deployment is the Sprint 1 completion blocker.</div>
+      </div>
     </div>
-  </div>
+  </section>
 
   <!-- ARCHITECTURE -->
-  <div class="section" id="architecture">
-    <span class="section-label">Architecture — The Flight Simulator Model</span>
+  <section id="architecture">
+    <h2>Architecture</h2>
 
-    <p style="color:var(--muted);font-size:0.9rem;margin-bottom:20px;max-width:800px">
-      The simulator is modelled on professional training environments —
-      NASA astronaut simulators, 737 flight simulators. The pilot (engineer) practices
-      every procedure in a realistic environment. The outputs map directly to real hardware
-      controls (XIQ API, CLI terminal). Zero delta between sim and production.
-    </p>
-
-    <div class="cards">
-      <div class="card">
-        <span class="card-label" style="color:var(--green)">SOA Layer</span>
-        <span class="status status-done">Built — Sprint 1</span>
-        <h3>7 Core Services</h3>
-        <ul>
-          <li>SimulationEngine — main loop orchestration</li>
-          <li>StateMachineService — 18-step FSM</li>
-          <li>CommandValidatorService — 4-tier matching</li>
-          <li>OutputSynthesisService — realistic show output</li>
-          <li>StudentGuidanceService — 3-tier hints + scoring</li>
-          <li>ExportEngine — CLI + XIQ + checklist</li>
-          <li>SimulatorUI — Streamlit 3-plane cockpit</li>
-        </ul>
-      </div>
-
-      <div class="card">
-        <span class="card-label" style="color:var(--yellow)">Agentic Layer</span>
-        <span class="status status-pend">Sprint 2 — React + FastAPI</span>
-        <h3>5 Discrete Agents</h3>
-        <ul>
-          <li>OnboardingAgent — welcome, prereqs, standards</li>
-          <li>FabricConfigAgent — 18-step CLI practice</li>
-          <li>VerificationAgent — auto-run all checks</li>
-          <li>OptimizationAgent — gap analysis + recs</li>
-          <li>SessionLogAgent — HTML report generator</li>
-        </ul>
-      </div>
-
-      <div class="card">
-        <span class="card-label" style="color:var(--blue)">Export Layer</span>
-        <span class="status status-done">Built — Sprint 1</span>
-        <h3>Deployable Outputs</h3>
-        <ul>
-          <li>SW1 CLI script (.voss) — paste into terminal</li>
-          <li>SW2 CLI script (.voss)</li>
-          <li>XIQ Policy JSON — importable via API</li>
-          <li>Deployment Checklist — pre-flight verification</li>
-          <li>Score Report — per-step scoring</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-
-  <!-- 3-PLANE VIEW -->
-  <div class="section" id="planes">
-    <span class="section-label">The Three-Plane Cockpit View</span>
-    <p style="color:var(--muted);font-size:0.85rem;margin-bottom:20px">
-      The key UX innovation — derived from the Google AI dialogue §4: Digital Twin Simulation Logic.
-      Three rows, time-aligned per migration step. All planes update simultaneously as the student
-      enters CLI commands — just like a pilot's cockpit.
-    </p>
-
-    <div class="plane-row plane-mgmt">
-      <div class="plane-label">🔧 Management Plane — XIQ Intent &amp; Policy Push</div>
-      <p>
-        What ExtremeCloud IQ (XIQ) is doing at each step: policy pushes, device templates,
-        Fabric Connect configuration, ZTP+ re-adoption, iqagent status.
-        Example (Step 4 — Configure ISIS): "XIQ: Configure &gt; Network Policy &gt;
-        Switching &gt; Common Settings &gt; Enable Fabric Connect. Set Manual Area: 00.0001."
-      </p>
-    </div>
-
-    <div class="plane-row plane-ctrl">
-      <div class="plane-label">🔄 Control Plane — IS-IS / SPB / Fabric Attach (IEEE 802.1aq + RFC 6329 + IEEE 802.1Qcj)</div>
-      <p>
-        What IS-IS and Fabric Attach are doing: adjacency formation, I-SID advertisement via LSPs,
-        AP3000 LLDP-FA TLV exchange. Live state overlays: adjacency UP/DOWN, I-SIDs active count.
-        Example (Step 7 — NNI port): "IS-IS hellos sent on Port 17. Adjacency: INIT → UP."
-      </p>
-    </div>
-
-    <div class="plane-row plane-data">
-      <div class="plane-label">📡 Data Plane — SPB Forwarding / MAC-in-MAC (IEEE 802.1ah)</div>
-      <p>
-        What IEEE 802.1ah (MAC-in-MAC) is doing: fabric encapsulation, I-SID service delivery,
-        E-LAN active/not-active, traffic paths. Live state: fabric services visible, E2E connectivity.
-        Example (Step 9 — Assign I-SIDs): "SPB fabric now carries VLANs as I-SID services.
-        Client frames encapsulated in backbone MAC + I-SID. Zero VLAN trunking on NNI."
-      </p>
-    </div>
-  </div>
-
-  <!-- STANDARDS -->
-  <div class="section" id="standards">
-    <span class="section-label">Standards Reference — Complete (20 total)</span>
-    <p style="color:var(--muted);font-size:0.85rem;margin-bottom:16px">
-      All standards consolidated in <code>simulator/config.py</code> as
-      <code>STANDARDS_EXOS</code> + <code>STANDARDS_FABRIC</code> + <code>STANDARDS_ALL</code>.
-    </p>
-
+    <h3>Service-Oriented Architecture (7 Services)</h3>
     <table>
-      <thead><tr><th>Standard</th><th>Phase</th><th>Title</th><th>Relevance to Lab</th></tr></thead>
-      <tbody>
-        <tr><td>IEEE 802.1Q</td>   <td><span class="std-badge std-exos">EXOS</span></td>   <td>Virtual LANs (VLAN Tagging)</td>    <td>802.1Q tags on EXOS inter-switch trunk — VLANs 10/20/30/50/60</td></tr>
-        <tr><td>IEEE 802.1D</td>   <td><span class="std-badge std-exos">EXOS</span></td>   <td>Bridging / Spanning Tree</td>       <td>EXOS ran RSTP — blocked ports, 1-3s convergence. Replaced by SPB in VOSS</td></tr>
-        <tr><td>IEEE 802.1w</td>   <td><span class="std-badge std-exos">EXOS</span></td>   <td>Rapid STP (RSTP)</td>               <td>EXOS default loop prevention — convergence 1-3s vs &lt;1s with SPB</td></tr>
-        <tr><td>IEEE 802.1X</td>   <td><span class="std-badge std-exos">EXOS</span></td>   <td>Port-Based Access Control</td>      <td>XIQ policy enforces 802.1X on Corp VLANs 20/50</td></tr>
-        <tr><td>IEEE 802.3af</td>  <td><span class="std-badge std-exos">EXOS</span></td>   <td>PoE — 15.4W</td>                    <td>AP3000 powered via PoE on Port 3 each switch</td></tr>
-        <tr><td>IEEE 802.3at</td>  <td><span class="std-badge std-exos">EXOS</span></td>   <td>PoE+ — 30W</td>                     <td>5320-16P supports PoE+ — AP3000 draws ~15W</td></tr>
-        <tr><td>IEEE 802.11</td>   <td><span class="std-badge std-exos">EXOS</span></td>   <td>Wi-Fi (802.11ax on AP3000)</td>     <td>AP3000 is Wi-Fi 6 — 4 SSIDs (Alpha/Bravo/Delta/Gamma)</td></tr>
-        <tr><td>RFC 2131</td>      <td><span class="std-badge std-exos">EXOS</span></td>   <td>DHCP</td>                           <td>EXOS: dhcp-address-range + dash separator; VOSS: ip dhcp-server pool</td></tr>
-        <tr><td>RFC 1918</td>      <td><span class="std-badge std-exos">EXOS</span></td>   <td>Private IP Addressing</td>          <td>All subnets: 10.0.x.0/24 (VOSS) and 10.10.0.x (EXOS mgmt)</td></tr>
-        <tr><td>RFC 3768</td>      <td><span class="std-badge std-exos">EXOS</span></td>   <td>VRRP</td>                           <td>Not used — replaced by Anycast Gateway in VOSS (same IP both BEBs)</td></tr>
-        <tr><td>IEEE 802.1aq</td>  <td><span class="std-badge std-fabric">FABRIC</span></td><td>Shortest Path Bridging (SPB)</td>  <td>Core control plane — IS-IS loop-free topology, I-SID service model</td></tr>
-        <tr><td>RFC 6329</td>      <td><span class="std-badge std-fabric">FABRIC</span></td><td>IS-IS Extensions for SPB</td>      <td>Carries SPB TLVs inside IS-IS hellos and LSPs on NNI Port 17</td></tr>
-        <tr><td>IEEE 802.1ah</td>  <td><span class="std-badge std-fabric">FABRIC</span></td><td>Provider Backbone Bridging</td>    <td>MAC-in-MAC data plane — NNI MTU must be ≥1522</td></tr>
-        <tr><td>IEEE 802.1Qcj</td> <td><span class="std-badge std-fabric">FABRIC</span></td><td>Fabric Attach</td>                 <td>AP3000 LLDP-FA TLVs request VLAN→I-SID bindings — zero manual trunking</td></tr>
-        <tr><td>IEEE 802.1ag</td>  <td><span class="std-badge std-fabric">FABRIC</span></td><td>Connectivity Fault Management</td> <td>End-to-end OAM across fabric — loopback, linktrace, continuity check</td></tr>
-        <tr><td>IEEE 802.1D</td>   <td><span class="std-badge std-fabric">FABRIC</span></td><td>Bridging baseline (superseded)</td><td>SPB replaces STP — all ports active simultaneously, no blocking</td></tr>
-        <tr><td>RFC 6329 §5</td>   <td><span class="std-badge std-fabric">FABRIC</span></td><td>IS-IS IP Shortcuts</td>           <td>SW2 learns SW1 default route via fabric — no static route needed</td></tr>
-        <tr><td>RFC 2131 (VOSS)</td><td><span class="std-badge std-fabric">FABRIC</span></td><td>DHCP (VOSS impl.)</td>           <td>Two enables: global + interface vlan — EXOS habit: forgetting second enable</td></tr>
-        <tr><td>IEEE 802.1Qbp</td> <td><span class="std-badge std-fabric">FABRIC</span></td><td>ECMP for SPB</td>                 <td>Both switches connect to modem — ECMP for resilient internet exit</td></tr>
-        <tr><td>IEEE 802.1AB</td>  <td><span class="std-badge std-fabric">FABRIC</span></td><td>LLDP</td>                         <td>FA uses LLDP as transport — must NOT be blocked on AP port 3</td></tr>
-      </tbody>
+      <tr><th>Service</th><th>File</th><th>Purpose</th></tr>
+      <tr><td>StateMachineService</td><td>simulator/services/state_machine_service.py</td><td>18-step FSM, jump_to_step(), advance/previous, per-switch StepProgress</td></tr>
+      <tr><td>CommandValidator</td><td>simulator/services/command_validator.py</td><td>Validates student CLI input vs expected commands, fuzzy match, state_updates</td></tr>
+      <tr><td>OutputSynthesisService</td><td>simulator/services/output_synthesis_service.py</td><td>Simulates "show" command output from LabState</td></tr>
+      <tr><td>StudentGuidanceService</td><td>simulator/services/student_guidance_service.py</td><td>Hints, attempt tracking, progressive disclosure</td></tr>
+      <tr><td>ExplainService</td><td>simulator/services/explain_service.py</td><td>Claude API with step context as RAG. Sprint 2: replace with pgvector lookup</td></tr>
+      <tr><td>ExportEngine</td><td>app/export_engine.py</td><td>Generates deployable CLI scripts (.voss) + XIQ policy JSON + checklist</td></tr>
+      <tr><td>LabState</td><td>simulator/models/lab_state.py</td><td>In-memory state for both switches (VLANs, I-SIDs, ISIS, FA, DHCP)</td></tr>
     </table>
-  </div>
 
-  <!-- DECISIONS -->
-  <div class="section" id="decisions">
-    <span class="section-label">Architecture Decisions — Jointly Agreed April 8 2026</span>
-    <div class="decision-grid">
-      <div class="dec-card">
-        <div class="dec-title">Session Persistence</div>
-        <div class="dec-s1">Sprint 1: In-memory (st.session_state)</div>
-        <div class="dec-s2">Sprint 2: PostgreSQL or Redis</div>
-      </div>
-      <div class="dec-card">
-        <div class="dec-title">Authentication</div>
-        <div class="dec-s1">Sprint 1: admin / Extreme01!!</div>
-        <div class="dec-s2">Sprint 2: XIQ login or LDAP</div>
-      </div>
-      <div class="dec-card">
-        <div class="dec-title">AI Explanations</div>
-        <div class="dec-s1">Sprint 1: On-demand (student requests)</div>
-        <div class="dec-s2">Sprint 2: Always-on streaming</div>
-      </div>
-      <div class="dec-card">
-        <div class="dec-title">UI Framework</div>
-        <div class="dec-s1">Sprint 1: Streamlit</div>
-        <div class="dec-s2">Sprint 2: React</div>
-      </div>
-      <div class="dec-card">
-        <div class="dec-title">Backend</div>
-        <div class="dec-s1">Sprint 1: Streamlit (built-in)</div>
-        <div class="dec-s2">Sprint 2: FastAPI + WebSocket</div>
-      </div>
-      <div class="dec-card">
-        <div class="dec-title">Deployment</div>
-        <div class="dec-s1">Sprint 1: Railway (Nixpacks)</div>
-        <div class="dec-s2">Sprint 2: Railway (Docker)</div>
-      </div>
-    </div>
-
-    <div style="margin-top:24px;background:var(--surface);border:1px solid var(--border);
-                border-left:4px solid var(--nyt);border-radius:6px;padding:16px">
-      <strong style="color:var(--text)">The "Flight Simulator" Principle</strong>
-      <p style="color:var(--muted);font-size:0.85rem;margin-top:6px">
-        The simulator is modelled on professional training: NASA astronaut training,
-        737 flight simulators. The engineer practices every procedure in a realistic environment.
-        Every command entered maps to real hardware behavior. Outputs (CLI scripts, XIQ JSON)
-        are directly deployable to physical Extreme 5320 switches — zero delta between
-        simulation and production.
-      </p>
-    </div>
-  </div>
-
-  <!-- URLS -->
-  <div class="section" id="urls">
-    <span class="section-label">URLs — All References</span>
-
-    <p style="color:var(--muted);font-size:0.8rem;margin-bottom:16px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em">This Session — VOSS Project</p>
-    <div class="url-row"><span class="url-label">VOSS Repo (GitHub)</span><a href="https://github.com/khursheedkhanaiforgood-ai/voss-fabric-migration" target="_blank">https://github.com/khursheedkhanaiforgood-ai/voss-fabric-migration</a></div>
-    <div class="url-row"><span class="url-label">Simulator (local)</span><a href="http://localhost:8502" target="_blank">http://localhost:8502</a></div>
-
-    <p style="color:var(--muted);font-size:0.8rem;margin-top:20px;margin-bottom:16px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em">Source Project — EXOS Lab</p>
-    <div class="url-row"><span class="url-label">5320 Landing Page</span><a href="https://khursheedkhanaiforgood-ai.github.io/5320-onboarding/" target="_blank">https://khursheedkhanaiforgood-ai.github.io/5320-onboarding/</a></div>
-    <div class="url-row"><span class="url-label">Lab Guide (Mar 29)</span><a href="https://khursheedkhanaiforgood-ai.github.io/5320-onboarding/lab_20260329.html" target="_blank">https://...lab_20260329.html</a></div>
-    <div class="url-row"><span class="url-label">Apr 8 E2E Session</span><a href="https://khursheedkhanaiforgood-ai.github.io/5320-onboarding/session_log_20260408.html" target="_blank">https://...session_log_20260408.html</a></div>
-
-    <p style="color:var(--muted);font-size:0.8rem;margin-top:20px;margin-bottom:16px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em">Reference &amp; Standards</p>
-    <div class="url-row"><span class="url-label">IEEE 802.1aq (SPB)</span><a href="https://1.ieee802.org/bridging/802-1aq/" target="_blank">https://1.ieee802.org/bridging/802-1aq/</a></div>
-    <div class="url-row"><span class="url-label">RFC 6329 (IS-IS/SPB)</span><a href="https://datatracker.ietf.org/doc/html/rfc6329" target="_blank">https://datatracker.ietf.org/doc/html/rfc6329</a></div>
-    <div class="url-row"><span class="url-label">Extreme 5320 Docs</span><a href="https://documentation.extremenetworks.com" target="_blank">https://documentation.extremenetworks.com</a></div>
-    <div class="url-row"><span class="url-label">Global Config Repo</span><a href="https://github.com/khursheedkhanaiforgood-ai/claude-global-config" target="_blank">https://github.com/khursheedkhanaiforgood-ai/claude-global-config</a></div>
-    <div class="url-row"><span class="url-label">Boris Cherny tips</span><a href="https://x.com/bcherny/status/2038454336355999749" target="_blank">https://x.com/bcherny/status/2038454336355999749</a></div>
-    <div class="url-row"><span class="url-label">Taggart critique</span><a href="https://taggart-tech.com/reckoning/" target="_blank">https://taggart-tech.com/reckoning/</a></div>
-    <div class="url-row"><span class="url-label">GeekWire AI coach</span><a href="https://www.geekwire.com/2026/opinion-ai-coach-or-ai-ghostwriter-the-choice-is-yours/" target="_blank">https://www.geekwire.com/2026/opinion-ai-coach-or-ai-ghostwriter-the-choice-is-yours/</a></div>
-  </div>
-
-  <!-- CREDENTIALS -->
-  <div class="section" id="credentials">
-    <span class="section-label">Credentials &amp; Access</span>
+    <h3>MigrationStep Model Fields</h3>
     <table>
-      <thead><tr><th>System</th><th>Username</th><th>Password / Key</th><th>Notes</th></tr></thead>
-      <tbody>
-        <tr><td>Flight Simulator</td><td>admin</td><td>Extreme01!!</td><td>All sprints</td></tr>
-        <tr><td>VOSS / FabricEngine CLI</td><td>rwa</td><td>rwa</td><td>Pre-GA default; admin blocked</td></tr>
-        <tr><td>Serial console</td><td>—</td><td>—</td><td>/dev/cu.usbserial-A9VKJO11 @ 115200</td></tr>
-        <tr><td>SW1 EXOS (before migration)</td><td>admin</td><td>—</td><td>192.168.0.28</td></tr>
-        <tr><td>SW2 EXOS (before migration)</td><td>admin</td><td>—</td><td>192.168.0.11</td></tr>
-        <tr><td>Quantum Fiber modem</td><td>—</td><td>—</td><td>192.168.1.1 gateway</td></tr>
-      </tbody>
+      <tr><th>Field</th><th>Type</th><th>Purpose</th></tr>
+      <tr><td>number</td><td>int</td><td>1–18 step index</td></tr>
+      <tr><td>name</td><td>str</td><td>Short name for UI display</td></tr>
+      <tr><td>phase</td><td>Phase enum</td><td>OS_CONVERSION / FABRIC_SETUP / VERIFICATION</td></tr>
+      <tr><td>theme</td><td>str</td><td>One of 7 functional themes (OS-CONVERT, ISIS-CONTROL, etc.)</td></tr>
+      <tr><td>applies_to</td><td>list[str]</td><td>["SW1"], ["SW2"], or ["SW1","SW2"]</td></tr>
+      <tr><td>expected_commands</td><td>dict[str,list]</td><td>Per-switch CLI command list</td></tr>
+      <tr><td>why</td><td>str</td><td>Plain-English explanation of why this step exists</td></tr>
+      <tr><td>exos_parallel</td><td>str</td><td>What the student already knows from EXOS</td></tr>
+      <tr><td>standard</td><td>str</td><td>Governing IEEE or RFC standard</td></tr>
+      <tr><td>standard_url</td><td>str</td><td>Clickable URL to IEEE/IETF reference</td></tr>
+      <tr><td>is_narrative</td><td>bool</td><td>True = confirm with Enter, no CLI typing</td></tr>
     </table>
-  </div>
 
-  <!-- COMMANDS -->
-  <div class="section" id="commands">
-    <span class="section-label">Key Commands</span>
+    <h3>7 Functional Themes (Bins)</h3>
+    <div class="bins">
+      <div class="bin" style="background:#1e3a5f;border:1px solid #3b82f6">
+        <div class="bin-key" style="color:#3b82f6">OS-CONVERT</div>
+        <div class="bin-label">OS Conversion</div>
+        <div class="bin-steps">Steps 1, 2, 3 — Backup, OS change, ZTP re-adoption</div>
+      </div>
+      <div class="bin" style="background:#14532d;border:1px solid #22c55e">
+        <div class="bin-key" style="color:#22c55e">ISIS-CONTROL</div>
+        <div class="bin-label">IS-IS Control Plane</div>
+        <div class="bin-steps">Steps 4, 5, 6 — Router ISIS, SPBM, enable</div>
+      </div>
+      <div class="bin" style="background:#4a1d96;border:1px solid #a855f7">
+        <div class="bin-key" style="color:#a855f7">NNI-LINK</div>
+        <div class="bin-label">NNI Backbone Link</div>
+        <div class="bin-steps">Step 7 — NNI port, IS-IS adjacency</div>
+      </div>
+      <div class="bin" style="background:#7c2d12;border:1px solid #f97316">
+        <div class="bin-key" style="color:#f97316">VLAN-ISID</div>
+        <div class="bin-label">VLAN / I-SID Services</div>
+        <div class="bin-steps">Steps 8, 9 — VLAN create + I-SID binding</div>
+      </div>
+      <div class="bin" style="background:#0c4a6e;border:1px solid #38bdf8">
+        <div class="bin-key" style="color:#38bdf8">ANYCAST-DHCP</div>
+        <div class="bin-label">Anycast Gateway + DHCP</div>
+        <div class="bin-steps">Steps 10, 11 — Anycast IP + DHCP server</div>
+      </div>
+      <div class="bin" style="background:#064e3b;border:1px solid #34d399">
+        <div class="bin-key" style="color:#34d399">ACCESS-FA</div>
+        <div class="bin-label">Fabric Attach + Routing</div>
+        <div class="bin-steps">Steps 12, 13, 14 — FA, internet exit, IP shortcuts</div>
+      </div>
+      <div class="bin" style="background:#27272a;border:1px solid #a1a1aa">
+        <div class="bin-key" style="color:#a1a1aa">SAVE-VERIFY</div>
+        <div class="bin-label">Save + Verify</div>
+        <div class="bin-steps">Steps 15, 16, 17, 18 — Save + ISIS/FA/E2E verify</div>
+      </div>
+    </div>
 
-    <div class="cb-label">Run the simulator locally</div>
-    <div class="codeblock"><code>cd /Users/khukhan/voss-fabric-migration
-streamlit run streamlit_app.py</code></div>
+    <h3>Lab Topology — Option A Resilient Fabric Core</h3>
+    <pre>
+          [ Internet — Quantum Fiber ISP ]
+                       |
+               192.168.1.1
+           [ Quantum Fiber Modem ]
+              /               \
+       Port1 /                 \ Port1
+  192.168.1.2                   192.168.1.3
+┌────────────────┐           ┌────────────────┐
+│  SW1 5320-16P  │           │  SW2 5320-16P  │
+│ sys-id 0001    │◄──NNI────►│ sys-id 0002    │
+│ nick: 0.00.01  │  P17-P17  │ nick: 0.00.02  │
+└───────┬────────┘  IS-IS/   └────────┬───────┘
+        │ Port3     I-SIDs            │ Port3
+┌───────▼────────┐           ┌────────▼───────┐
+│  AP3000-1      │           │  AP3000-2      │
+│  FA Client     │           │  FA Client     │
+└───────┬────────┘           └───────┬────────┘
+Alpha VLAN20  Bravo VLAN30  Delta VLAN50  Gamma VLAN60
+10.0.20.x     10.0.30.x     10.0.50.x    10.0.60.x
+ iPhone 1      iPhone 2      iPhone 3     iPhone 4
 
-    <div class="cb-label">Run tests</div>
-    <div class="codeblock"><code>python3 -m pytest simulator/tests/ -v</code></div>
+XIQ Cloud ─── iqagent manages both switches + both APs ───
+NNI: IS-IS (RFC 6329) + I-SID E-LAN (802.1aq) + MAC-in-MAC (802.1ah)
+FA:  Fabric Attach (IEEE 802.1Qcj) — AP self-provisions VLANs via LLDP
+    </pre>
+  </section>
 
-    <div class="cb-label">Deploy to Railway</div>
-    <div class="codeblock"><code>cd /Users/khukhan/voss-fabric-migration
-railway login    # if not already logged in
-railway up       # deploy to Railway</code></div>
+  <!-- SPRINT STATUS -->
+  <section id="sprint-status">
+    <h2>Sprint Status</h2>
 
-    <div class="cb-label">EXOS backup before OS change</div>
-    <div class="codeblock"><code># On each EXOS switch:
-save configuration as-script switch1_backup.xsf
-cp /usr/local/cfg/switch1_backup.xsf /usr/local/ext/
-ls /usr/local/ext
-unmount /usr/local/ext   # safe eject before removing USB</code></div>
+    <div class="callout callout-yellow">
+      <p><strong>Sprint 1 — BUILT but NOT COMPLETE.</strong>
+      The Streamlit simulator is fully functional locally. Sprint 1 closes when it is deployed
+      to Railway and accessible via a public URL. All config files (railway.json, Procfile,
+      requirements.txt) are committed and ready.</p>
+    </div>
 
-    <div class="cb-label">VOSS verification sequence (after migration)</div>
-    <div class="codeblock"><code>show isis adjacency          # State: UP (L1L2)
-show spbm                    # ethertype: 0x8100
-show i-sid                   # 5 services, Type: ELAN
-show fa neighbor             # AP3000 on Port 1/3
-show fa assignment           # State: ACTIVE, Type: DYNAMIC
-show ip route                # 0.0.0.0/0 via 192.168.1.1
-show ip dhcp-server summary  # 4 pools active
-show application iqagent status  # Connection: Connected</code></div>
-  </div>
+    <h3>Sprint 1 Checklist</h3>
+    <table>
+      <tr><th>Item</th><th>Status</th></tr>
+      <tr><td>18-step FSM (StateMachineService)</td><td><span class="badge badge-done">Done</span></td></tr>
+      <tr><td>CommandValidator (fuzzy match, state_updates)</td><td><span class="badge badge-done">Done</span></td></tr>
+      <tr><td>OutputSynthesisService (show commands)</td><td><span class="badge badge-done">Done</span></td></tr>
+      <tr><td>StudentGuidanceService (hints)</td><td><span class="badge badge-done">Done</span></td></tr>
+      <tr><td>ExplainService (Claude API + step context)</td><td><span class="badge badge-done">Done</span></td></tr>
+      <tr><td>ExportEngine (CLI scripts + XIQ JSON)</td><td><span class="badge badge-done">Done</span></td></tr>
+      <tr><td>7 Functional Themes + why explanations on 18 steps</td><td><span class="badge badge-done">Done</span></td></tr>
+      <tr><td>3-Plane cockpit context for all 18 steps</td><td><span class="badge badge-done">Done</span></td></tr>
+      <tr><td>Clickable standards links (IEEE/RFC)</td><td><span class="badge badge-done">Done</span></td></tr>
+      <tr><td>Theory section on welcome page (incl. XIQ)</td><td><span class="badge badge-done">Done</span></td></tr>
+      <tr><td>Live Fabric Status Bar + navigation</td><td><span class="badge badge-done">Done</span></td></tr>
+      <tr><td>Auth persist (no re-login on return)</td><td><span class="badge badge-done">Done</span></td></tr>
+      <tr><td>Theory sections in dropdowns (expanders)</td><td><span class="badge badge-pending">Pending next session</span></td></tr>
+      <tr><td>Auth block moved to top of welcome page</td><td><span class="badge badge-pending">Pending next session</span></td></tr>
+      <tr><td>Railway deployment</td><td><span class="badge badge-blocked">Sprint 1 blocker</span></td></tr>
+    </table>
+
+    <h3>Sprint 2 — Planned (not started)</h3>
+    <ul>
+      <li>React frontend (3-panel: step tracker | terminal | cockpit)</li>
+      <li>FastAPI backend + WebSocket</li>
+      <li>5 agents: OnboardingAgent · FabricConfigAgent · VerificationAgent · OptimizationAgent · SessionLogAgent</li>
+      <li>pgvector RAG corpus — VOSS CLI PDF + IEEE summaries + 18 seed rows</li>
+      <li>Persistent sessions (PostgreSQL or Redis)</li>
+      <li>XIQ authentication (replace admin/Extreme01!!)</li>
+      <li>Socratic mode — integrate feature/socratic-mode branch</li>
+    </ul>
+
+    <h3>Git Branches</h3>
+    <table>
+      <tr><th>Branch</th><th>State</th><th>Notes</th></tr>
+      <tr><td><code>main</code></td><td><span class="badge badge-done">Production</span></td><td>Current simulator — no socratic mode</td></tr>
+      <tr><td><code>feature/socratic-mode</code></td><td><span class="badge badge-branch">Frozen</span></td><td>Full socratic (hide answers, dialogue log, user-script export, diff view). Sprint 2 candidate.</td></tr>
+    </table>
+  </section>
+
+  <!-- THEORY ADDED -->
+  <section id="theory">
+    <h2>Theory Sections Added to Welcome Page</h2>
+    <p>All of the following are now on the welcome page as plain-English explanations.
+    <strong>Next session:</strong> wrap each in <code>st.expander()</code> so users can skip to auth.</p>
+
+    <div class="card">
+      <div class="card-title">Section 1</div>
+      <h3>What Is This Migration and Why Does It Matter?</h3>
+      <p>Core difference between EXOS and VOSS: in EXOS you ARE the fabric (manual trunks everywhere);
+      in FabricEngine you configure only the edge, fabric handles everything in between automatically.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">Section 2</div>
+      <h3>How Does a Phone Get an IP Address Through the Fabric?</h3>
+      <p>6-step data path: Wi-Fi connect → Fabric Attach LLDP-FA TLV → DHCP Discover → IS-IS routes
+      frame → DHCP Offer from SW1 → Internet via default route. SW2 clients reach SW1 DHCP transparently via SPB.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">Section 3</div>
+      <h3>Why IS-IS? What is SPBM?</h3>
+      <p>IS-IS operates at Layer 2 before IP is configured. RFC 6329 extends it to carry B-MAC, I-SID, nick-name.
+      SPBM wraps customer frames in MAC-in-MAC (IEEE 802.1ah) — backbone never learns customer MACs.
+      Edge-only configuration principle: BEBs configure services; core switches forward IS-IS + MAC-in-MAC only.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">Section 4 — Added this session</div>
+      <h3>What Is XIQ's Role?</h3>
+      <p>XIQ = intent layer. iqagent daemon runs on each switch/AP, HTTPS tunnel to XIQ cloud.
+      ZTP+: factory-fresh switch after OS change gets DHCP on VLAN 1, calls home, downloads device template — zero manual login.
+      XIQ manages: IS-IS area, SPBM, NNI port templates, VLAN definitions, FA mappings, AP policies.
+      DHCP server pools are CLI-only (XIQ FabricEngine policy doesn't expose per-VLAN DHCP config).</p>
+    </div>
+    <div class="card">
+      <div class="card-title">Section 5</div>
+      <h3>The 18 Steps as One Sentence Each — The Migration Story</h3>
+      <p>7-theme story rows (color-coded by theme): each theme is one sentence describing what it accomplishes
+      at a high level — for a student who needs the forest before the trees.</p>
+    </div>
+  </section>
 
   <!-- FILES -->
-  <div class="section" id="files">
-    <span class="section-label">Files Created / Modified Today</span>
+  <section id="files">
+    <h2>Key Files</h2>
     <table>
-      <thead><tr><th>File</th><th>Status</th><th>Purpose</th></tr></thead>
-      <tbody>
-        <tr><td>streamlit_app.py</td><td><span class="tag">New</span></td><td>Main Streamlit app — welcome, simulator, export pages</td></tr>
-        <tr><td>app/export_engine.py</td><td><span class="tag">New</span></td><td>CLI script + XIQ JSON + deployment checklist generator</td></tr>
-        <tr><td>app/__init__.py</td><td><span class="tag">New</span></td><td>App package init</td></tr>
-        <tr><td>.streamlit/config.toml</td><td><span class="tag">New</span></td><td>NYT theme colors + server config</td></tr>
-        <tr><td>railway.json</td><td><span class="tag">New</span></td><td>Railway deployment (Nixpacks, streamlit --server.port $PORT)</td></tr>
-        <tr><td>Procfile</td><td><span class="tag">New</span></td><td>Heroku-compatible process file</td></tr>
-        <tr><td>requirements.txt</td><td><span class="tag">Updated</span></td><td>Added streamlit>=1.35.0, pandas>=2.0.0</td></tr>
-        <tr><td>simulator/config.py</td><td><span class="tag">Updated</span></td><td>STANDARDS_EXOS (10) + STANDARDS_FABRIC (10) + STANDARDS_ALL</td></tr>
-        <tr><td>simulator/models/migration_step.py</td><td><span class="tag">New (Apr 8)</span></td><td>18 MigrationStep objects — exos_parallel + standard on each</td></tr>
-        <tr><td>simulator/services/command_validator.py</td><td><span class="tag">New (Apr 8)</span></td><td>4-tier validation + EXOS-habit detection</td></tr>
-        <tr><td>simulator/services/output_synthesis.py</td><td><span class="tag">New (Apr 8)</span></td><td>Realistic show command output from SwitchModel state</td></tr>
-        <tr><td>simulator/services/state_machine_service.py</td><td><span class="tag">New (Apr 8)</span></td><td>18-step FSM with per-switch progress tracking</td></tr>
-        <tr><td>simulator/services/student_guidance.py</td><td><span class="tag">New (Apr 8)</span></td><td>3-tier hints + attempt tracking + scoring</td></tr>
-        <tr><td>simulator/tests/test_switch_state.py</td><td><span class="tag">New (Apr 8)</span></td><td>7 tests — SwitchModel, LabState, adjacency logic</td></tr>
-        <tr><td>simulator/tests/test_command_validator.py</td><td><span class="tag">New (Apr 8)</span></td><td>9 tests — all validation tiers, EXOS habits</td></tr>
-        <tr><td>~/.claude/CLAUDE.md</td><td><span class="tag">Updated</span></td><td>All docx items added — headless/CI, mobile, Dispatch, ninadurann repo</td></tr>
-        <tr><td>docs/session_summary_20260408.html</td><td><span class="tag">New</span></td><td>This file</td></tr>
-      </tbody>
+      <tr><th>File</th><th>Changed</th><th>Notes</th></tr>
+      <tr><td><code>streamlit_app.py</code></td><td><span class="badge badge-done">Yes</span></td>
+          <td>Main app — welcome page theory, XIQ section, auth persist, 3-plane cockpit, all navigation</td></tr>
+      <tr><td><code>simulator/models/migration_step.py</code></td><td><span class="badge badge-done">Yes</span></td>
+          <td>Added theme, why, standard_url to MigrationStep dataclass. THEMES dict. All 18 steps updated.</td></tr>
+      <tr><td><code>simulator/services/explain_service.py</code></td><td><span class="badge badge-done">New</span></td>
+          <td>ExplainService — Claude API with step context as RAG substitute. Sprint 2: pgvector.</td></tr>
+      <tr><td><code>simulator/services/state_machine_service.py</code></td><td><span class="badge badge-done">Yes</span></td>
+          <td>Fixed StepProgress.complete, added jump_to_step(), previous_step()</td></tr>
+      <tr><td><code>simulator/config.py</code></td><td><span class="badge badge-done">Yes</span></td>
+          <td>Added url field to all 20 standards in STANDARDS_EXOS + STANDARDS_FABRIC</td></tr>
+      <tr><td><code>app/export_engine.py</code></td><td><span class="badge badge-done">Yes</span></td>
+          <td>Fixed relative import error; generates SW1/SW2 CLI scripts + XIQ JSON + checklist</td></tr>
+      <tr><td><code>railway.json</code></td><td><span class="badge badge-done">New</span></td>
+          <td>Railway Nixpacks config: <code>streamlit run streamlit_app.py --server.port $PORT</code></td></tr>
+      <tr><td><code>Procfile</code></td><td><span class="badge badge-done">New</span></td>
+          <td>Heroku-compatible: <code>web: streamlit run streamlit_app.py --server.port $PORT</code></td></tr>
+      <tr><td><code>docs/session_summary_20260408.html</code></td><td><span class="badge badge-done">Updated</span></td>
+          <td>This file — full EOD session report</td></tr>
     </table>
-  </div>
+  </section>
+
+  <!-- URLs -->
+  <section id="urls">
+    <h2>URLs</h2>
+    <table>
+      <tr><th>Resource</th><th>URL</th></tr>
+      <tr><td>Simulator Repo (GitHub)</td>
+          <td><a href="https://github.com/khursheedkhanaiforgood-ai/voss-fabric-migration" target="_blank">github.com/khursheedkhanaiforgood-ai/voss-fabric-migration</a></td></tr>
+      <tr><td>Local Simulator</td>
+          <td><a href="http://localhost:8501" target="_blank">localhost:8501</a> — run: <code>streamlit run streamlit_app.py</code></td></tr>
+      <tr><td>Railway Deploy (pending)</td>
+          <td>https://voss-fabric-migration-production.up.railway.app (once deployed)</td></tr>
+      <tr><td>EXOS Onboarding Lab</td>
+          <td><a href="https://khursheedkhanaiforgood-ai.github.io/5320-onboarding/" target="_blank">khursheedkhanaiforgood-ai.github.io/5320-onboarding/</a></td></tr>
+      <tr><td>Lab Guide (Mar 29 – Apr 8)</td>
+          <td><a href="https://khursheedkhanaiforgood-ai.github.io/5320-onboarding/lab_20260329.html" target="_blank">lab_20260329.html</a></td></tr>
+      <tr><td>April 8 E2E Session Log</td>
+          <td><a href="https://khursheedkhanaiforgood-ai.github.io/5320-onboarding/session_log_20260408.html" target="_blank">session_log_20260408.html</a></td></tr>
+      <tr><td>IEEE 802.1aq (SPB)</td>
+          <td><a href="https://www.ieee802.org/1/pages/802.1aq.html" target="_blank">ieee802.org — 802.1aq</a></td></tr>
+      <tr><td>RFC 6329 (IS-IS for SPB)</td>
+          <td><a href="https://www.rfc-editor.org/rfc/rfc6329" target="_blank">rfc-editor.org/rfc/rfc6329</a></td></tr>
+      <tr><td>IEEE 802.1Qcj (Fabric Attach)</td>
+          <td><a href="https://www.ieee802.org/1/pages/802.1Qcj-2015.html" target="_blank">ieee802.org — 802.1Qcj</a></td></tr>
+    </table>
+  </section>
+
+  <!-- CREDENTIALS -->
+  <section id="credentials">
+    <h2>Credentials</h2>
+    <div class="callout callout-yellow">
+      <p><strong>Note:</strong> These are lab credentials only — not production systems.</p>
+    </div>
+    <table>
+      <tr><th>System</th><th>Username</th><th>Password</th><th>Notes</th></tr>
+      <tr><td>Simulator (admin)</td><td><code>admin</code></td><td><code>Extreme01!!</code></td><td>Configured in streamlit_app.py ADMIN_USER/ADMIN_PASS</td></tr>
+      <tr><td>Switch CLI (FabricEngine)</td><td><code>rwa</code></td><td><code>rwa</code></td><td>Admin account blocked in pre-GA VOSS builds</td></tr>
+      <tr><td>Serial console</td><td colspan="2">115200 baud, no parity</td><td>/dev/cu.usbserial-A9VKJO11</td></tr>
+    </table>
+  </section>
+
+  <!-- COMMANDS -->
+  <section id="commands">
+    <h2>Key Commands</h2>
+
+    <h3>Run Simulator Locally</h3>
+    <pre>cd /Users/khukhan/voss-fabric-migration
+streamlit run streamlit_app.py</pre>
+
+    <h3>Deploy to Railway</h3>
+    <pre>railway login              # browser OAuth
+railway init               # link to project (or create new)
+railway up                 # deploy from current directory
+
+# In Railway dashboard → Service → Variables:
+ANTHROPIC_API_KEY=sk-ant-...
+# PORT is set automatically by Railway</pre>
+
+    <h3>Git Workflow</h3>
+    <pre>git log --oneline -10
+git checkout feature/socratic-mode    # to review socratic implementation
+git checkout main                     # back to production</pre>
+
+    <h3>In-Simulator CLI Commands</h3>
+    <pre>explain               # Ask Claude why this step works this way
+why [concept]         # e.g. "why is-is" or "why i-sid"
+show isis adjacency   # Simulated CLI output
+hint                  # Progressive hint from StudentGuidanceService
+skip                  # Skip current step (free navigation)
+sw1 / sw2             # Switch active switch context</pre>
+
+    <h3>Recent Commits</h3>
+    <pre>8952fd5  Add XIQ theory section to welcome page
+60a79c2  Restore auth persist: no re-login when returning from landing page
+c7d5be3  Revert "Socratic mode, user-script export, dialogue log, auth persist, diff view"
+0da0d14  Socratic mode, user-script export, dialogue log, auth persist, diff view
+1cad72a  Nav: clickable steps, prev/next, live status bar, topology + refs in sidebar
+9dc9f9b  Fix: confirm button, narrative CLI, topology, landing link, Cisco-EN mapping
+cfd44ff  Sprint 1: thematic bins, why explanations, ExplainService, topology, clickable standards</pre>
+  </section>
 
   <!-- PENDING -->
-  <div class="section" id="pending">
-    <span class="section-label">Pending — Next Session</span>
+  <section id="pending">
+    <h2>Pending — Next Session</h2>
 
-    <div class="cards">
-      <div class="card">
-        <span class="status status-pend">Your Action</span>
-        <span class="card-label" style="color:var(--yellow)">You Write This</span>
-        <h3>Simulator Description Text</h3>
-        <p>
-          The welcome page has a placeholder: <em>"About This Simulator."</em>
-          Write 2-3 paragraphs: what this simulator is, who it's for, what the student
-          will learn. Replace the <code>st.info()</code> block in
-          <code>streamlit_app.py</code> line ~183.
-        </p>
-      </div>
-
-      <div class="card">
-        <span class="status status-pend">Next Session</span>
-        <span class="card-label" style="color:var(--yellow)">Railway Deploy</span>
-        <h3>Push to Railway</h3>
-        <p>
-          Run <code>railway login</code> then <code>railway up</code> from repo root.
-          Set env var: no secrets needed for Sprint 1 (auth is hardcoded).
-          Simulator will be publicly shareable at Railway URL.
-        </p>
-      </div>
-
-      <div class="card">
-        <span class="status status-pend">Sprint 2</span>
-        <span class="card-label" style="color:var(--yellow)">React + FastAPI</span>
-        <h3>Sprint 2 Architecture</h3>
-        <p>
-          FastAPI backend + WebSocket. 5 discrete agents (Onboarding, FabricConfig,
-          Verification, Optimization, SessionLog). AgentOrchestrator with handoff protocol.
-          React 3-panel UI. Redis/PostgreSQL for persistence. XIQ login auth.
-        </p>
-      </div>
-
-      <div class="card">
-        <span class="status status-pend">Sprint 2</span>
-        <span class="card-label" style="color:var(--yellow)">AI Explanations</span>
-        <h3>ExplanationService (Phase 3)</h3>
-        <p>
-          On-demand Claude API explanations after each step.
-          System prompt: VOSS instructor persona referencing IEEE 802.1aq.
-          Offline fallback from <code>data/explanations.yaml</code>.
-          Connect to <code>ANTHROPIC_API_KEY</code> Railway env var.
-        </p>
-      </div>
-
-      <div class="card">
-        <span class="status status-pend">Sprint 2</span>
-        <span class="card-label" style="color:var(--yellow)">Session Log HTML</span>
-        <h3>SessionLogAgent</h3>
-        <p>
-          Dark-themed HTML session report at simulation end. Sections: command log,
-          per-step scores, verification results, standards reviewed, recommendations.
-          Save to <code>docs/session_reports/</code> — downloadable from export page.
-        </p>
-      </div>
-
-      <div class="card">
-        <span class="status status-pend">Sprint 2</span>
-        <span class="card-label" style="color:var(--yellow)">Interface VLAN IP</span>
-        <h3>Fix pending_ip State Update</h3>
-        <p>
-          <code>_apply_state_updates</code> has a no-op for <code>pending_ip</code> —
-          needs interface-vlan context tracking to correctly assign IPs to VLANs.
-          Known gap, logged in <code>simulation_engine.py</code> comment.
-        </p>
-      </div>
+    <div class="callout callout-red">
+      <p><strong>Sprint 1 Blocker:</strong> Railway deployment. Everything else is polish.
+      Do this first in the next session.</p>
     </div>
-  </div>
 
-  <hr class="divider">
-  <p style="text-align:center;color:var(--muted);font-size:0.75rem">
-    Built with Claude Code · April 8, 2026 · Extreme Networks Lab Series ·
-    <a href="https://github.com/khursheedkhanaiforgood-ai/voss-fabric-migration">GitHub</a>
-  </p>
+    <h3>Immediate (next session, in order)</h3>
+    <ol>
+      <li><strong>Railway deployment</strong> — run <code>railway login</code> + <code>railway up</code> from /Users/khukhan/voss-fabric-migration. Set ANTHROPIC_API_KEY env var in dashboard. Sprint 1 closes when this URL is live.</li>
+      <li><strong>Theory → expanders</strong> — wrap all 5 theory sections in <code>st.expander(expanded=False)</code> so users can skip to auth without scrolling.</li>
+      <li><strong>Auth to top</strong> — move the "Start the Simulation" auth block to right after the hero header. Users should be able to log in without seeing theory first.</li>
+    </ol>
+
+    <h3>Sprint 2 (after Railway is live)</h3>
+    <ul>
+      <li>React frontend (3-panel layout)</li>
+      <li>FastAPI + WebSocket backend</li>
+      <li>5-agent orchestration</li>
+      <li>pgvector RAG corpus (VOSS CLI PDF ingestion)</li>
+      <li>Persistent sessions</li>
+      <li>XIQ auth integration</li>
+      <li>Review + integrate <code>feature/socratic-mode</code></li>
+    </ul>
+
+    <div class="callout callout-purple" style="margin-top:20px">
+      <p><strong>Known issue (from Fix_Fabric.docx):</strong> HTML tags showing as raw text in the CLI panel.
+      This is already fixed in code (<code>unsafe_allow_html=True</code> present on all markdown calls).
+      If still visible, restart Streamlit — it may be a cached version of the UI.</p>
+    </div>
+  </section>
 
 </div>
 
-<script>
-  // Active nav on scroll
-  const sections = document.querySelectorAll('.section[id]');
-  const navLinks = document.querySelectorAll('nav a[href^="#"]');
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        navLinks.forEach(l => l.classList.remove('active'));
-        const active = document.querySelector(`nav a[href="#${e.target.id}"]`);
-        if (active) active.classList.add('active');
-      }
-    });
-  }, { rootMargin: '-40% 0px -55% 0px' });
-  sections.forEach(s => observer.observe(s));
-</script>
+<footer>
+  FabricEngine Flight Simulator · April 8, 2026 · Sprint 1 — built, Railway deploy pending<br>
+  Repo: <a href="https://github.com/khursheedkhanaiforgood-ai/voss-fabric-migration">github.com/khursheedkhanaiforgood-ai/voss-fabric-migration</a>
+</footer>
+
 </body>
 </html>
