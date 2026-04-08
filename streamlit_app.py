@@ -257,12 +257,183 @@ def page_welcome():
 
     st.markdown("---")
 
-    # ── Simulator description placeholder ─────────────────────────────────────
-    st.info(
-        "**About This Simulator** — *(Your description goes here — replace this block with your own text)*\n\n"
-        "This section is reserved for your introduction to the simulator: what it simulates, "
-        "who it is for, and what the student will learn by completing it."
-    )
+    # ── Theory: What FabricEngine is and how this migration works ─────────────
+    st.markdown("### What Is This Migration and Why Does It Matter?")
+    st.markdown("""
+    <div style="background:#f8fafc;border-left:4px solid #326891;
+                padding:20px 24px;border-radius:0 6px 6px 0;
+                font-size:0.92rem;line-height:1.8;color:#1e293b">
+
+    <p><b>The situation:</b> You have two Extreme 5320 switches running EXOS/SwitchEngine,
+    two AP3000 access points (one on each switch), a Quantum Fiber modem, and four iPhones
+    connecting across four SSIDs. Everything works. Now you are migrating the switches
+    from EXOS to VOSS/FabricEngine — the same hardware, a different operating system,
+    a fundamentally different architecture.</p>
+
+    <p><b>The core difference:</b> In EXOS you were the fabric. You manually trunked every
+    VLAN across every uplink, added every VLAN to every AP port, and configured DHCP and
+    routing independently on each switch. Every new VLAN meant touching every device.
+    In FabricEngine you configure only the <em>edge</em> — the switch port where a
+    client or AP connects — and the fabric handles everything in between automatically.
+    This is not a small improvement. It changes how you think about the network entirely.</p>
+
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown("#### How does a phone actually get an IP address through the fabric?")
+    st.markdown("""
+    <div style="background:#0f172a;color:#e2e8f0;border-radius:8px;
+                padding:20px 24px;font-size:0.88rem;line-height:1.9;margin:8px 0">
+
+    <p style="margin:0 0 12px 0">Follow one iPhone connecting to the Alpha SSID (VLAN 20):</p>
+
+    <table style="width:100%;border-collapse:collapse;font-size:0.85rem">
+    <tr><td style="color:#60a5fa;padding:4px 12px 4px 0;white-space:nowrap;vertical-align:top">
+        1. Wi-Fi connect</td>
+        <td style="color:#e2e8f0;padding:4px 0">iPhone associates with Alpha SSID on AP3000.
+        The AP is connected to SW1 Port 3.</td></tr>
+    <tr><td style="color:#60a5fa;padding:4px 12px 4px 0;white-space:nowrap;vertical-align:top">
+        2. Fabric Attach</td>
+        <td style="color:#e2e8f0;padding:4px 0">AP3000 sends an LLDP-FA message to SW1:
+        "I need VLAN 20 mapped to I-SID 100020."
+        SW1 checks — I-SID 100020 exists — and grants it. Port 3 is now carrying VLAN 20.
+        No admin touched that port. No trunk command was typed.</td></tr>
+    <tr><td style="color:#60a5fa;padding:4px 12px 4px 0;white-space:nowrap;vertical-align:top">
+        3. DHCP Discover</td>
+        <td style="color:#e2e8f0;padding:4px 0">iPhone broadcasts DHCP Discover on VLAN 20.
+        The frame enters the fabric as I-SID 100020 traffic.</td></tr>
+    <tr><td style="color:#60a5fa;padding:4px 12px 4px 0;white-space:nowrap;vertical-align:top">
+        4. IS-IS fabric</td>
+        <td style="color:#e2e8f0;padding:4px 0">IS-IS (the fabric routing protocol) already knows
+        the shortest path between SW1 and SW2 via the NNI link (Port 17).
+        Both switches have I-SID 100020 defined, so SW1 is the authoritative DHCP server
+        for VLAN 20 — the Anycast Gateway 10.0.20.1 is active on both switches.</td></tr>
+    <tr><td style="color:#60a5fa;padding:4px 12px 4px 0;white-space:nowrap;vertical-align:top">
+        5. DHCP Offer</td>
+        <td style="color:#e2e8f0;padding:4px 0">SW1 DHCP server responds: IP 10.0.20.105,
+        gateway 10.0.20.1, DNS 8.8.8.8. iPhone has a working IP address.</td></tr>
+    <tr><td style="color:#60a5fa;padding:4px 12px 4px 0;white-space:nowrap;vertical-align:top">
+        6. Internet</td>
+        <td style="color:#e2e8f0;padding:4px 0">iPhone sends a packet to google.com.
+        It goes to 10.0.20.1 (Anycast Gateway on SW1) → default route → VLAN 100 (Internet Exit)
+        → Port 1 → Quantum Fiber modem 192.168.1.1 → Internet.</td></tr>
+    </table>
+
+    <p style="margin:12px 0 0 0;color:#94a3b8;font-size:0.8rem">
+    If the iPhone is on SW2's AP instead: same path, except step 4 uses the IS-IS fabric
+    to reach SW1's DHCP server, and internet exits directly via SW2's own Port 1 modem connection.
+    Both switches have independent internet exits — this is Option A Resilient Fabric Core.</p>
+
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown("#### Why IS-IS? What is SPBM?")
+    st.markdown("""
+    <div style="background:#f8fafc;border-left:4px solid #1a7a3a;
+                padding:18px 24px;border-radius:0 6px 6px 0;
+                font-size:0.9rem;line-height:1.8;color:#1e293b;margin:8px 0">
+
+    <p><b>IS-IS</b> (Intermediate System to Intermediate System) is a routing protocol
+    that operates at Layer 2 — meaning it can build a network topology map before any
+    IP addresses are configured on the switches. This matters because the fabric needs
+    to exist before your VLANs and services are layered on top of it.
+    IS-IS is what SPB (IEEE 802.1aq) uses as its control plane. RFC 6329 extends IS-IS
+    to carry fabric-specific information: which switch has which I-SID, what the backbone
+    MAC addresses are, and how to reach each node.</p>
+
+    <p><b>SPBM</b> (Shortest Path Bridging MAC) is the data-plane technology.
+    When a frame travels across the NNI link between SW1 and SW2, it is wrapped in a
+    MAC-in-MAC header (IEEE 802.1ah) — the original customer frame is encapsulated
+    inside a backbone frame. This means the backbone network never needs to learn
+    customer MAC addresses. The I-SID in the backbone header identifies which service
+    (VLAN) the frame belongs to. When it arrives at the far switch, the backbone header
+    is stripped and the original frame is delivered to the right VLAN.</p>
+
+    <p><b>The edge-only configuration principle:</b>
+    You configure IS-IS and I-SIDs on the edge switches (BEBs — Backbone Edge Bridges).
+    If there were core switches between SW1 and SW2, you would configure only IS-IS
+    on those core switches — no VLANs, no services, no DHCP.
+    The core just forwards IS-IS topology and carries MAC-in-MAC frames.
+    In this two-switch lab, SW1 and SW2 are both edge and core simultaneously.</p>
+
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown("#### What is XIQ's Role in All of This?")
+    st.markdown("""
+    <div style="background:#1e1433;border-left:4px solid #e879f9;
+                padding:18px 24px;border-radius:0 6px 6px 0;
+                font-size:0.9rem;line-height:1.8;color:#e2e8f0;margin:8px 0">
+
+    <p><b>ExtremeCloud IQ (XIQ)</b> is the cloud management plane that sits above both switches
+    and both APs. You can think of it as the intent layer — you describe what you want the network
+    to do (VLANs, policies, Fabric Attach mappings, port templates), and XIQ translates that
+    intent into CLI commands pushed to each device via the <b>iqagent</b> daemon running on every
+    switch and AP.</p>
+
+    <p><b>The iqagent</b> runs continuously on both switches. It is the VOSS equivalent of EXOS's
+    ExtremeCloud IQ agent — but in VOSS, it uses a secure HTTPS tunnel back to the XIQ cloud
+    controller. You verify it is connected with: <code style="background:#2d1b4e;padding:2px 6px;
+    border-radius:3px;font-size:0.82rem">show application iqagent status</code>. If iqagent is
+    not Connected, XIQ can see the switch exists but cannot push configuration.</p>
+
+    <p><b>Zero Touch Provisioning Plus (ZTP+)</b> is how a factory-fresh switch re-adopts into XIQ
+    after the OS change. The switch boots, gets a DHCP address on VLAN 1, reaches out to the XIQ
+    cloud URL, and downloads the device template and network policy assigned to it. You do NOT
+    log into the switch manually at this stage — ZTP+ handles the entire onboarding sequence.
+    Steps 2 and 3 of this migration are entirely orchestrated by XIQ's ZTP+ process.</p>
+
+    <p><b>What XIQ pushes vs. what you configure in CLI:</b> XIQ manages the structural
+    configuration — IS-IS area, SPBM instance, NNI port templates, VLAN definitions,
+    Fabric Attach mappings, and AP policies. The DHCP server pools are CLI-only because
+    XIQ's FabricEngine policy does not currently expose per-VLAN DHCP pool configuration.
+    This is why Step 11 (DHCP) is always done at the CLI, even in a fully XIQ-managed environment.</p>
+
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown("#### The 18 Steps as One Sentence Each — The Migration Story")
+    story_rows = [
+        ("OS-CONVERT",   "1–3",  "#3b82f6",
+         "Back up everything, tell XIQ to reformat both switches as FabricEngine, "
+         "and wait for them to re-register in XIQ as VOSS devices."),
+        ("ISIS-CONTROL", "4–6",  "#22c55e",
+         "Give each switch a unique IS-IS identity (system-id), tell them they are in "
+         "the same IS-IS area (manual-area 00.0001), configure the SPBM instance "
+         "with a matching ethertype, then activate IS-IS so hellos start flowing."),
+        ("NNI-LINK",     "7",    "#a855f7",
+         "Enable IS-IS on the NNI port (Port 17) between the two switches so they "
+         "form an adjacency — once adjacency is UP, the fabric backbone is live."),
+        ("VLAN-ISID",    "8–9",  "#f97316",
+         "Create the five service VLANs on both switches and bind each one to an I-SID — "
+         "this declares the fabric services and makes them reachable across the NNI."),
+        ("ANYCAST-DHCP", "10–11","#38bdf8",
+         "Assign the same gateway IP to each VLAN on both switches (Anycast Gateway), "
+         "then configure SW1 as the single DHCP server — SW2 clients reach it via the fabric automatically."),
+        ("ACCESS-FA",    "12–14","#34d399",
+         "Enable Fabric Attach on Port 3 so AP3000 self-provisions its VLANs, "
+         "create the Internet Exit VLAN on Port 1 with a default route to the modem, "
+         "and enable IP Shortcuts so SW2 learns SW1's default route via IS-IS."),
+        ("SAVE-VERIFY",  "15–18","#a1a1aa",
+         "Save config to NVRAM (VOSS does not auto-save), then verify IS-IS adjacency "
+         "is UP, FA assignments are ACTIVE, and all four iPhones get DHCP and reach the internet."),
+    ]
+    for theme, steps, color, sentence in story_rows:
+        st.markdown(
+            f"""<div style="display:flex;gap:12px;align-items:flex-start;
+                           margin:6px 0;padding:10px 14px;
+                           border-left:4px solid {color};background:#fafafa;border-radius:0 5px 5px 0">
+              <div style="min-width:110px">
+                <div style="color:{color};font-size:0.62rem;font-weight:700;
+                            letter-spacing:0.1em;text-transform:uppercase">{theme}</div>
+                <div style="color:#888;font-size:0.72rem">Steps {steps}</div>
+              </div>
+              <div style="color:#1e293b;font-size:0.88rem;line-height:1.6">{sentence}</div>
+            </div>""",
+            unsafe_allow_html=True,
+        )
+
+    st.markdown("---")
 
     # ── Learning chain ─────────────────────────────────────────────────────────
     st.markdown("### Learning Path — Linked Context")
