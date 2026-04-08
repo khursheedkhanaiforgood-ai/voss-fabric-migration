@@ -6,12 +6,8 @@ Prerequisites: Students should complete the EXOS lab before this simulation.
   - Lab guide:      https://khursheedkhanaiforgood-ai.github.io/5320-onboarding/lab_20260329.html
   - Apr 8 E2E:      https://khursheedkhanaiforgood-ai.github.io/5320-onboarding/session_log_20260408.html
 
-Standards governing this deployment:
-  - IEEE 802.1aq   — Shortest Path Bridging (SPB) — control plane architecture
-  - RFC 6329       — IS-IS Extensions for SPB
-  - IEEE 802.1ah   — Provider Backbone Bridging (MAC-in-MAC) — data plane encapsulation
-  - IEEE 802.1Qcj  — Fabric Attach — AP auto-provisioning
-  - IEEE 802.1ag   — Connectivity Fault Management (OAM)
+Full standards reference: see STANDARDS_EXOS (Phase 1 baseline) and STANDARDS_FABRIC (Phase 2 target).
+Both are combined in STANDARDS_ALL for display in the simulator welcome screen.
 """
 
 # ─── Source Lab (EXOS baseline — student must have completed this first) ──────
@@ -95,18 +91,81 @@ DHCP_POOLS = {
 INTERNET_EXIT_VLAN = 100
 INTERNET_EXIT_NAME = "Internet_Exit"
 
-# ─── Standards Reference ──────────────────────────────────────────────────────
-STANDARDS = [
-    {"id": "IEEE 802.1aq", "title": "Shortest Path Bridging (SPB)",
-     "relevance": "Control plane — IS-IS-based loop-free fabric topology, I-SID service model"},
-    {"id": "RFC 6329",     "title": "IS-IS Extensions for IEEE 802.1aq",
-     "relevance": "Protocol extensions that carry SPB TLVs inside IS-IS hellos and LSPs"},
-    {"id": "IEEE 802.1ah", "title": "Provider Backbone Bridging (PBB / MAC-in-MAC)",
-     "relevance": "Data plane encapsulation — customer MAC frames wrapped in backbone MAC + I-SID"},
-    {"id": "IEEE 802.1Qcj","title": "Automatic Attachment to Provider Backbone Bridging Services",
-     "relevance": "Fabric Attach — AP3000 uses LLDP-FA TLVs to dynamically request VLAN→I-SID bindings"},
-    {"id": "IEEE 802.1ag", "title": "Connectivity Fault Management (OAM)",
-     "relevance": "End-to-end service OAM — loopback, linktrace, continuity check across Fabric"},
-    {"id": "IEEE 802.1D",  "title": "Bridging (spanning tree baseline)",
-     "relevance": "SPB replaces STP — no blocked ports, all paths active simultaneously"},
+# ─── Standards Reference — Phase 1: EXOS/SwitchEngine Baseline ───────────────
+# These governed the deployed EXOS lab (completed Apr 7-8 2026).
+# Reference: https://khursheedkhanaiforgood-ai.github.io/5320-onboarding/
+STANDARDS_EXOS = [
+    {"id": "IEEE 802.1Q",   "phase": "EXOS",
+     "title": "Virtual LANs (VLAN Tagging)",
+     "relevance": "802.1Q tags on inter-switch trunk ports — how EXOS VLANs 10/20/30/50/60 traversed the uplink"},
+    {"id": "IEEE 802.1D",   "phase": "EXOS",
+     "title": "MAC Bridges and Spanning Tree Protocol (STP)",
+     "relevance": "EXOS ran RSTP (802.1w) to prevent loops — replaced entirely by SPB in VOSS"},
+    {"id": "IEEE 802.1w",   "phase": "EXOS",
+     "title": "Rapid Spanning Tree Protocol (RSTP)",
+     "relevance": "EXOS default loop prevention — convergence 1-3s on link failure vs <1s with SPB"},
+    {"id": "IEEE 802.1X",   "phase": "EXOS",
+     "title": "Port-Based Network Access Control",
+     "relevance": "EXOS port authentication — XIQ policy enforces 802.1X on Corp VLANs 20/50"},
+    {"id": "IEEE 802.3af",  "phase": "EXOS",
+     "title": "Power over Ethernet (PoE) — 15.4W",
+     "relevance": "AP3000 powered via PoE on Port 3 each switch — 802.3af/at compliant"},
+    {"id": "IEEE 802.3at",  "phase": "EXOS",
+     "title": "Power over Ethernet Plus (PoE+) — 30W",
+     "relevance": "5320-16P supports PoE+ — AP3000 draws ~15W, well within budget"},
+    {"id": "IEEE 802.11",   "phase": "EXOS",
+     "title": "Wireless LAN (Wi-Fi — 802.11ax on AP3000)",
+     "relevance": "AP3000 is Wi-Fi 6 (802.11ax) — 4 SSIDs (Corp, Guest, Corp2, Guest2)"},
+    {"id": "RFC 2131",      "phase": "EXOS",
+     "title": "Dynamic Host Configuration Protocol (DHCP)",
+     "relevance": "EXOS DHCP server per switch — `dhcp-address-range` syntax + port-based enable"},
+    {"id": "RFC 1918",      "phase": "EXOS",
+     "title": "Address Allocation for Private Internets",
+     "relevance": "All lab subnets use RFC 1918 space: 10.0.x.0/24 (VOSS target) and 10.10.0.x (EXOS mgmt)"},
+    {"id": "RFC 3768",      "phase": "EXOS",
+     "title": "Virtual Router Redundancy Protocol (VRRP)",
+     "relevance": "Not used in EXOS lab — replaced by Anycast Gateway in VOSS (same IP on both BEBs)"},
 ]
+
+# ─── Standards Reference — Phase 2: VOSS/FabricEngine Target ─────────────────
+# These govern the migration target — IEEE 802.1aq SPB fabric deployment.
+STANDARDS_FABRIC = [
+    {"id": "IEEE 802.1aq",  "phase": "VOSS",
+     "title": "Shortest Path Bridging (SPB)",
+     "relevance": "Core control plane — IS-IS builds loop-free topology; I-SIDs define E-LAN services across the fabric"},
+    {"id": "RFC 6329",      "phase": "VOSS",
+     "title": "IS-IS Extensions for IEEE 802.1aq",
+     "relevance": "Carries SPB TLVs (B-MAC, I-SID, nick-name) inside IS-IS hellos and LSPs on NNI Port 17"},
+    {"id": "IEEE 802.1ah",  "phase": "VOSS",
+     "title": "Provider Backbone Bridging (PBB — MAC-in-MAC)",
+     "relevance": "Data plane — customer MAC frames encapsulated in backbone MAC + 24-bit I-SID; NNI MTU must be ≥1522"},
+    {"id": "IEEE 802.1Qcj", "phase": "VOSS",
+     "title": "Automatic Attachment to Provider Backbone Bridging Services (Fabric Attach)",
+     "relevance": "AP3000 sends LLDP-FA TLVs on Port 3 requesting VLAN→I-SID bindings — zero manual port trunking"},
+    {"id": "IEEE 802.1ag",  "phase": "VOSS",
+     "title": "Connectivity Fault Management (OAM)",
+     "relevance": "End-to-end service OAM across the fabric — loopback, linktrace, continuity check per I-SID"},
+    {"id": "IEEE 802.1D",   "phase": "VOSS",
+     "title": "Bridging baseline (superseded by SPB)",
+     "relevance": "SPB replaces STP entirely — no blocked ports, all paths active simultaneously (contrast with EXOS RSTP)"},
+    {"id": "RFC 6329 §5",   "phase": "VOSS",
+     "title": "IS-IS IP Shortcuts for SPB",
+     "relevance": "ip-shortcut under router isis — SW2 learns SW1 default route via fabric; no static route needed on SW2"},
+    {"id": "RFC 2131",      "phase": "VOSS",
+     "title": "DHCP (VOSS implementation)",
+     "relevance": "VOSS: `ip dhcp-server enable` globally + pool + `ip dhcp-server enable` on interface vlan (TWO enables)"},
+    {"id": "IEEE 802.1Qbp", "phase": "VOSS",
+     "title": "Equal Cost Multiple Path (ECMP) for SPB",
+     "relevance": "Both switches connect to Quantum Fiber modem (Port 1) — ECMP over fabric for resilient internet exit"},
+    {"id": "IEEE 802.1AB",  "phase": "VOSS",
+     "title": "Link Layer Discovery Protocol (LLDP)",
+     "relevance": "FA uses LLDP as transport — AP3000 sends FA TLVs via LLDP; must NOT be blocked on Port 3"},
+]
+
+# ─── Combined Standards Table (EXOS baseline → VOSS target) ──────────────────
+# Used by simulator welcome screen, agent onboarding, and HTML session reports.
+# Ordered: EXOS standards first (what student already knows), then VOSS (what's new).
+STANDARDS_ALL = STANDARDS_EXOS + STANDARDS_FABRIC
+
+# Backward-compat alias (used in simulator_ui.py)
+STANDARDS = STANDARDS_ALL
