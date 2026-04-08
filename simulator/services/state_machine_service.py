@@ -134,6 +134,16 @@ class StateMachineService:
         self._current_step_number += 1
         return self.current_step
 
+    def jump_to_step(self, step_number: int) -> None:
+        """Jump directly to any step (simulator practice mode — no prerequisite enforcement)."""
+        if 1 <= step_number <= self.total_steps:
+            self._current_step_number = step_number
+
+    def previous_step(self) -> None:
+        """Go back one step."""
+        if self._current_step_number > 1:
+            self._current_step_number -= 1
+
     def is_complete(self) -> bool:
         """True when all 18 steps are done."""
         return self._current_step_number > self.total_steps

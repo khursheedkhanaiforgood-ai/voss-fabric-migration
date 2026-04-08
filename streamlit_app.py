@@ -520,30 +520,56 @@ def render_plane_row(plane_key: str, step_number: int, lab: LabState):
 
 
 def render_step_tracker():
-    """Left sidebar: 18 steps with status icons."""
+    """Left sidebar: 18 clickable steps with status icons."""
     sm = st.session_state.sm
-    current = sm.current_step_number
+
+    phase_colors = {
+        "Phase 1 — OS Conversion":          "#3b82f6",
+        "Phase 2 — SPB Fabric + Services":  "#22c55e",
+        "Phase 3 — DHCP, Routing, AP Verification": "#a855f7",
+    }
+    last_phase = None
 
     for step in MIGRATION_STEPS:
         status = sm.step_status(step.number)
+        phase_label = step.phase.value
+
+        # Phase divider
+        if phase_label != last_phase:
+            phase_short = {"Phase 1 — OS Conversion": "— P1: OS Conversion",
+                           "Phase 2 — SPB Fabric + Services": "— P2: Fabric",
+                           "Phase 3 — DHCP, Routing, AP Verification": "— P3: Verify"}.get(phase_label, "")
+            ph_color = phase_colors.get(phase_label, "#888")
+            st.markdown(
+                f'<div style="font-size:0.6rem;font-weight:700;color:{ph_color};'
+                f'letter-spacing:0.1em;text-transform:uppercase;'
+                f'margin:6px 0 2px 0;padding-top:4px;border-top:1px solid #eee">'
+                f'{phase_short}</div>',
+                unsafe_allow_html=True,
+            )
+            last_phase = phase_label
+
         if status == "completed":
-            icon = "✅"
-            style = "color: #1a7a3a; font-size: 0.8rem;"
+            icon, txt_color, bg = "✅", "#1a7a3a", "#f0fdf4"
         elif status == "active":
-            icon = "▶️"
-            style = "color: #326891; font-weight: 700; font-size: 0.8rem;"
+            icon, txt_color, bg = "▶", "#326891", "#eff6ff"
         else:
-            icon = "○"
-            style = "color: #999; font-size: 0.8rem;"
+            icon, txt_color, bg = "○", "#999", "transparent"
 
-        phase_short = {"Phase 1 — OS Conversion": "P1",
-                       "Phase 2 — SPB Fabric + Services": "P2",
-                       "Phase 3 — DHCP, Routing, AP Verification": "P3"}.get(step.phase.value, "")
-
-        st.markdown(
-            f'<div style="{style}">{icon} <b>{step.number}</b> {step.name[:28]}</div>',
-            unsafe_allow_html=True,
-        )
+        btn_label = f"{icon} {step.number}. {step.name[:22]}"
+        if st.button(
+            btn_label,
+            key=f"step_btn_{step.number}",
+            use_container_width=True,
+            help=step.name,
+        ):
+            sm.jump_to_step(step.number)
+            st.session_state.last_feedback = None
+            st.session_state.show_output = None
+            st.session_state.last_explanation = None
+            if step.applies_to:
+                st.session_state.active_switch = step.applies_to[0]
+            st.rerun()
 
 
 def render_switch_state_mini(sw: SwitchModel):
@@ -568,22 +594,40 @@ def page_simulator():
     step = sm.current_step
     sw_id = st.session_state.active_switch
 
-    # ── Header bar ────────────────────────────────────────────────────────────
+    # ── Live Fabric Status Bar (top of every page) ────────────────────────────
     prog = sm.overall_progress()
     score = guidance.total_score()
+    health = lab.health_summary()
+
+    isis_up   = health["ISIS adjacency"] == "UP"
+    fab_vis   = lab.fabric_services_visible
+    e2e_ok    = lab.e2e_connectivity
+    isid_cnt  = min(len(lab.sw1.vlans_with_isids), len(lab.sw2.vlans_with_isids))
+    theme_meta = THEMES.get(step.theme, {"border": "#326891", "label": step.theme})
+
+    def _dot(ok): return f'<span style="color:{"#4ade80" if ok else "#f87171"}">{"●" if ok else "○"}</span>'
 
     st.markdown(
         f"""
-        <div style="background:#111;color:#fff;padding:10px 16px;border-radius:5px;
-                    display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-          <span style="font-size:0.9rem;font-weight:700">
-            FabricEngine Flight Simulator
+        <div style="background:#0f172a;color:#e2e8f0;padding:10px 16px;border-radius:6px;
+                    display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;
+                    flex-wrap:wrap;gap:6px">
+          <span style="font-size:0.85rem;font-weight:700;color:#fff">
+            FabricEngine Simulator
+            &nbsp;<span style="background:{theme_meta['border']}22;color:{theme_meta['border']};
+                   border:1px solid {theme_meta['border']};border-radius:3px;
+                   font-size:0.6rem;padding:1px 7px;font-weight:700;letter-spacing:0.1em">
+              {step.theme}
+            </span>
           </span>
-          <span style="font-size:0.85rem">
-            Step <b>{step.number}</b>/18 &nbsp;|&nbsp;
-            <span style="color:#4ade80">{int(prog*100)}%</span> &nbsp;|&nbsp;
-            Score: <span style="color:#facc15">{score}</span> &nbsp;|&nbsp;
-            Active: <b style="color:#60a5fa">{sw_id}</b>
+          <span style="font-size:0.82rem;display:flex;gap:16px;flex-wrap:wrap">
+            <span>Step <b style="color:#60a5fa">{step.number}/18</b></span>
+            <span>{_dot(isis_up)} ISIS {health["ISIS adjacency"]}</span>
+            <span>{_dot(isid_cnt==5)} I-SIDs {isid_cnt}/5</span>
+            <span>{_dot(fab_vis)} Fabric {"LIVE" if fab_vis else "DOWN"}</span>
+            <span>{_dot(e2e_ok)} E2E {"OK" if e2e_ok else "–"}</span>
+            <span style="color:#94a3b8">Score <b style="color:#facc15">{score}</b></span>
+            <span style="color:#94a3b8">Active <b style="color:#60a5fa">{sw_id}</b></span>
           </span>
         </div>
         """,
@@ -595,13 +639,41 @@ def page_simulator():
     tracker_col, main_col = st.columns([1, 3])
 
     with tracker_col:
-        if st.button("← Landing Page", use_container_width=True, type="secondary"):
+        # Navigation buttons
+        nav_prev, nav_next = st.columns(2)
+        with nav_prev:
+            if st.button("← Prev", use_container_width=True, disabled=(step.number <= 1)):
+                sm.previous_step()
+                st.session_state.last_feedback = None
+                st.session_state.show_output = None
+                st.session_state.last_explanation = None
+                st.rerun()
+        with nav_next:
+            if st.button("Next →", use_container_width=True, disabled=(step.number >= 18)):
+                sm.jump_to_step(step.number + 1)
+                st.session_state.last_feedback = None
+                st.session_state.show_output = None
+                st.session_state.last_explanation = None
+                st.rerun()
+
+        if st.button("⌂ Landing Page", use_container_width=True, type="secondary"):
             st.session_state.page = "welcome"
             st.rerun()
-        st.markdown("**Migration Steps**")
+
+        st.markdown(
+            '<div style="font-size:0.7rem;font-weight:700;color:#888;'
+            'letter-spacing:0.1em;text-transform:uppercase;margin:6px 0 2px 0">'
+            'Steps</div>',
+            unsafe_allow_html=True,
+        )
         render_step_tracker()
+
         st.markdown("---")
-        st.markdown("**Switch context**")
+        st.markdown(
+            '<div style="font-size:0.7rem;font-weight:700;color:#888;'
+            'letter-spacing:0.1em;text-transform:uppercase;margin:2px 0">Switch</div>',
+            unsafe_allow_html=True,
+        )
         sw1_btn = st.button("🔵 SW1", use_container_width=True,
                             type="primary" if sw_id == "SW1" else "secondary")
         sw2_btn = st.button("🟣 SW2", use_container_width=True,
@@ -612,6 +684,39 @@ def page_simulator():
         if sw2_btn:
             st.session_state.active_switch = "SW2"
             st.rerun()
+
+        st.markdown("---")
+
+        # ── Quick Reference panel ──────────────────────────────────────────────
+        with st.expander("📚 References", expanded=False):
+            st.markdown("**Lab Links**")
+            st.markdown(
+                "- [5320 EXOS Lab](https://khursheedkhanaiforgood-ai.github.io/5320-onboarding/)\n"
+                "- [Lab Guide Mar 29](https://khursheedkhanaiforgood-ai.github.io/5320-onboarding/lab_20260329.html)\n"
+                "- [Apr 8 E2E Session](https://khursheedkhanaiforgood-ai.github.io/5320-onboarding/session_log_20260408.html)"
+            )
+            st.markdown("**Key Standards**")
+            from simulator.config import STANDARDS_FABRIC as _SF
+            for s in _SF[:6]:
+                url = s.get("url", "")
+                if url:
+                    st.markdown(f"- [{s['id']}]({url}) — {s['title'].split('(')[0].strip()}")
+
+        with st.expander("🗺 Topology", expanded=False):
+            st.code(
+                "Internet\n"
+                "   |\n"
+                "192.168.1.1 Modem\n"
+                "  /         \\\n"
+                "[SW1]──NNI──[SW2]\n"
+                "P17       P17\n"
+                "P3          P3\n"
+                "[AP1]      [AP2]\n"
+                "Alpha/Bravo Delta/Gamma\n"
+                "VLAN20/30  VLAN50/60\n"
+                "I-SID100020 I-SID100050",
+                language=None,
+            )
 
     with main_col:
         # ── Step card with theme badge ─────────────────────────────────────────
