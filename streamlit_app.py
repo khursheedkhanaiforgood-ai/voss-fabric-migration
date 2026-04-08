@@ -183,6 +183,9 @@ def init_session():
         st.session_state.explain_svc = ExplainService()
     if "last_explanation" not in st.session_state:
         st.session_state.last_explanation = None
+    if "dialogue_log" not in st.session_state:
+        # Each entry: {step, switch, user_input, agent_response, valid, timestamp}
+        st.session_state.dialogue_log = []
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -462,21 +465,32 @@ FA:  Fabric Attach (IEEE 802.1Qcj) — AP auto-provisions VLAN/I-SID, no manual 
 
     st.markdown("---")
 
-    # ── Login ──────────────────────────────────────────────────────────────────
+    # ── Login / Return ────────────────────────────────────────────────────────
     st.markdown("### Start the Simulation")
-    with st.form("login_form"):
-        name = st.text_input("Your name (for session report)", placeholder="e.g. Khursheed Khan")
-        user = st.text_input("Username")
-        pwd  = st.text_input("Password", type="password")
-        submitted = st.form_submit_button("🚀 Enter the Simulator", use_container_width=True)
-        if submitted:
-            if user == ADMIN_USER and pwd == ADMIN_PASS:
-                st.session_state.authenticated = True
-                st.session_state.student_name = name or "Lab Engineer"
-                st.session_state.page = "simulator"
-                st.rerun()
-            else:
-                st.error("Invalid credentials. Contact your lab administrator.")
+    if st.session_state.get("authenticated"):
+        sm = st.session_state.get("sm")
+        step_num = sm.current_step_number if sm else 1
+        st.success(
+            f"✅ Logged in as **{st.session_state.student_name}** — "
+            f"currently on Step {step_num}/18."
+        )
+        if st.button("↩ Return to Simulator", use_container_width=True, type="primary"):
+            st.session_state.page = "simulator"
+            st.rerun()
+    else:
+        with st.form("login_form"):
+            name = st.text_input("Your name (for session report)", placeholder="e.g. Khursheed Khan")
+            user = st.text_input("Username")
+            pwd  = st.text_input("Password", type="password")
+            submitted = st.form_submit_button("🚀 Enter the Simulator", use_container_width=True)
+            if submitted:
+                if user == ADMIN_USER and pwd == ADMIN_PASS:
+                    st.session_state.authenticated = True
+                    st.session_state.student_name = name or "Lab Engineer"
+                    st.session_state.page = "simulator"
+                    st.rerun()
+                else:
+                    st.error("Invalid credentials. Contact your lab administrator.")
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -838,35 +852,25 @@ def page_simulator():
             prog_obj = sm.step_progress(sw_id)
             next_idx = prog_obj.next_command_index if prog_obj else 0
 
-            # Build command checklist HTML
-            cmd_rows = ""
-            for i, cmd in enumerate(expected_cmds):
-                if prog_obj and i < (next_idx or 0):
-                    icon = "✅"
-                    style = "color:#4ade80;text-decoration:line-through;opacity:0.7"
-                elif i == (next_idx or 0):
-                    icon = "▶"
-                    style = "color:#fbbf24;font-weight:700"
-                else:
-                    style = "color:#94a3b8"
-                    icon = "○"
-                cmd_rows += (
-                    f'<div style="font-family:monospace;font-size:0.9rem;'
-                    f'padding:4px 0;{style}">'
-                    f'{icon}  {cmd}</div>\n'
-                )
+            done_count = next_idx or 0
+            total_count = len(expected_cmds)
 
             st.markdown(
                 f"""
                 <div style="background:#0f172a;border:2px solid #326891;
                             border-radius:8px;padding:16px 20px;margin:12px 0">
                   <div style="color:#60a5fa;font-size:0.7rem;letter-spacing:0.2em;
-                              text-transform:uppercase;font-weight:700;margin-bottom:10px">
-                    🖥  TYPE THESE COMMANDS NOW  —  [{sw_id}]  ({next_idx or 0}/{len(expected_cmds)} done)
+                              text-transform:uppercase;font-weight:700;margin-bottom:8px">
+                    🖥  [{sw_id}] — {done_count}/{total_count} commands entered
                   </div>
-                  {cmd_rows}
-                  <div style="color:#64748b;font-size:0.75rem;margin-top:10px">
-                    ▶ = type next · ✅ = done · also: <span style="color:#60a5fa">explain</span> / <span style="color:#60a5fa">why [concept]</span> · show &lt;cmd&gt; · hint · sw1 / sw2
+                  <div style="color:#e2e8f0;font-size:0.88rem;line-height:1.6;margin-bottom:8px">
+                    <b>Goal:</b> {step.description}
+                  </div>
+                  <div style="color:#64748b;font-size:0.75rem">
+                    Type what you think the next command is &nbsp;·&nbsp;
+                    <span style="color:#60a5fa">hint</span> for a clue &nbsp;·&nbsp;
+                    <span style="color:#60a5fa">explain</span> / <span style="color:#60a5fa">why</span> for context &nbsp;·&nbsp;
+                    <span style="color:#60a5fa">show &lt;cmd&gt;</span> to inspect state
                   </div>
                 </div>
                 """,
@@ -913,8 +917,36 @@ def page_simulator():
 
                 else:
                     result = validator.validate(raw, step, sw_id, next_idx or 0)
+                    attempts = guidance.attempts_for(step.number, sw_id)
                     guidance.record_attempt(step.number, sw_id, result.valid)
 
+                    # Socratic wrong-answer response: guide with a question, not the answer
+                    if not result.valid and result.match_type == "none":
+                        tier = 1 if attempts <= 1 else (2 if attempts <= 3 else 3)
+                        socratic = guidance.get_hint(step, sw_id, attempts)
+                        result = type(result)(
+                            valid=False,
+                            feedback=(
+                                f"Not quite. Think about what this step requires: "
+                                f"{step.description.split('.')[0]}.\n"
+                                f"{'Consider: ' if tier < 3 else 'Closer look: '}{socratic}"
+                            ),
+                            match_type=result.match_type,
+                            command_index=result.command_index,
+                            state_updates=result.state_updates,
+                        )
+
+                    # Save to dialogue log (the session record)
+                    import datetime
+                    st.session_state.dialogue_log.append({
+                        "ts": datetime.datetime.now().strftime("%H:%M:%S"),
+                        "step": step.number,
+                        "step_name": step.name,
+                        "switch": sw_id,
+                        "user_input": raw,
+                        "valid": result.valid,
+                        "agent_response": result.feedback,
+                    })
                     st.session_state.command_history.append({
                         "switch": sw_id, "step": step.number,
                         "cmd": raw, "valid": result.valid,
@@ -1054,6 +1086,76 @@ def page_simulator():
 # PAGE: EXPORT
 # ─────────────────────────────────────────────────────────────────────────────
 
+def _build_user_script(switch_id: str, student_name: str) -> str:
+    """Generate a CLI script from what the student actually typed (valid commands only)."""
+    from datetime import datetime
+    history = st.session_state.get("command_history", [])
+    valid_cmds = [
+        e["cmd"] for e in history
+        if e["switch"] == switch_id and e["valid"]
+    ]
+    lines = [
+        "!" * 70,
+        f"! YOUR SESSION SCRIPT — {switch_id}",
+        f"! Student: {student_name}",
+        f"! Generated: {datetime.now().strftime('%Y-%m-%d %H:%M')}",
+        "!",
+        "! This script contains the commands YOU entered during simulation.",
+        "! Compare against the reference script (diff view below) before deploying.",
+        "!" * 70,
+        "",
+    ]
+    if valid_cmds:
+        lines += valid_cmds
+    else:
+        lines += ["! No valid commands entered yet for this switch."]
+    return "\n".join(lines)
+
+
+def _build_diff(user_script: str, ref_script: str) -> str:
+    """Line-by-line diff: user vs reference (correct answers)."""
+    import difflib
+    user_lines = user_script.splitlines()
+    ref_lines  = ref_script.splitlines()
+    diff = list(difflib.unified_diff(
+        user_lines, ref_lines,
+        fromfile="Your Session Script",
+        tofile="Reference (Correct Answers)",
+        lineterm="",
+    ))
+    return "\n".join(diff) if diff else "✅ No differences — your script matches the reference."
+
+
+def _build_dialogue_log(student_name: str) -> str:
+    """Export the full Socratic dialogue from the session."""
+    from datetime import datetime
+    log = st.session_state.get("dialogue_log", [])
+    lines = [
+        "=" * 70,
+        f"SESSION DIALOGUE LOG — {student_name}",
+        f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M')}",
+        "=" * 70,
+        "",
+    ]
+    if not log:
+        lines.append("No dialogue recorded yet.")
+    else:
+        cur_step = None
+        for entry in log:
+            if entry["step"] != cur_step:
+                cur_step = entry["step"]
+                lines += [
+                    "",
+                    f"── Step {entry['step']}: {entry['step_name']} ──",
+                    "",
+                ]
+            icon = "✅" if entry["valid"] else "✗"
+            lines.append(f"  [{entry['ts']}] [{entry['switch']}] You: {entry['user_input']}")
+            lines.append(f"  [{entry['ts']}]          Agent: {icon} {entry['agent_response']}")
+            lines.append("")
+    return "\n".join(lines)
+
+
 def page_export():
     lab: LabState = st.session_state.lab
     sm: StateMachineService = st.session_state.sm
@@ -1064,84 +1166,142 @@ def page_export():
     score = guidance.total_score()
     max_score = guidance.max_score()
 
-    st.markdown("## 📦 Deploy to Real Hardware")
+    st.markdown("## 📦 Export & Deploy")
     st.caption(
-        "These artifacts are generated from your simulation session. "
-        "They can be applied directly to physical Extreme 5320 switches — "
-        "zero delta between simulation and production."
+        "**Your session scripts** contain the commands you actually typed. "
+        "Use the diff view to compare against the reference (correct) scripts before deploying to real hardware."
     )
 
     if complete:
         st.success(f"✅ Simulation complete! Score: **{score}/{max_score}**")
     else:
-        remaining = 18 - sm.current_step_number + 1
-        st.info(f"Simulation in progress (Step {sm.current_step_number}/18). "
-                f"You can export partial configs at any time.")
+        st.info(f"Simulation in progress — Step {sm.current_step_number}/18. "
+                "You can export at any time.")
+
+    if st.button("← Back to Simulator", type="secondary"):
+        st.session_state.page = "simulator"
+        st.rerun()
 
     exp = ExportEngine(lab, student_name)
 
+    # ── 1. Your Session Scripts (what YOU typed) ───────────────────────────────
     st.markdown("---")
-    st.markdown("### 1. CLI Configuration Scripts")
+    st.markdown("### 1. Your Session Scripts — What You Typed")
     st.markdown(
-        "*Paste directly into VOSS terminal or upload as `.voss` script via XIQ CLI tool.*"
+        "*These scripts contain only the commands you entered and were validated as correct. "
+        "Take these to a real switch after reviewing the diff below.*"
+    )
+
+    c1, c2 = st.columns(2)
+    with c1:
+        user_sw1 = _build_user_script("SW1", student_name)
+        st.download_button(
+            "⬇️ SW1 — Your Commands (.voss)",
+            data=user_sw1, file_name="sw1_your_session.voss",
+            mime="text/plain", use_container_width=True,
+        )
+        with st.expander("Preview — your SW1 commands"):
+            st.code(user_sw1, language="bash")
+    with c2:
+        user_sw2 = _build_user_script("SW2", student_name)
+        st.download_button(
+            "⬇️ SW2 — Your Commands (.voss)",
+            data=user_sw2, file_name="sw2_your_session.voss",
+            mime="text/plain", use_container_width=True,
+        )
+        with st.expander("Preview — your SW2 commands"):
+            st.code(user_sw2, language="bash")
+
+    # ── 2. Reference Scripts (correct answers) ─────────────────────────────────
+    st.markdown("---")
+    st.markdown("### 2. Reference Scripts — Correct Answers")
+    st.markdown(
+        "*The complete correct configuration. Use as a study reference or for direct deployment "
+        "if you want to skip the diff step.*"
     )
     c1, c2 = st.columns(2)
     with c1:
-        sw1_script = exp.cli_script("SW1")
+        ref_sw1 = exp.cli_script("SW1")
         st.download_button(
-            label="⬇️ Download SW1 Config (.voss)",
-            data=sw1_script,
-            file_name="sw1_fabricengine_config.voss",
-            mime="text/plain",
-            use_container_width=True,
+            "⬇️ SW1 — Reference Script (.voss)",
+            data=ref_sw1, file_name="sw1_reference.voss",
+            mime="text/plain", use_container_width=True,
         )
-        with st.expander("Preview SW1 script"):
-            st.code(sw1_script, language="bash")
+        with st.expander("Preview — SW1 reference"):
+            st.code(ref_sw1, language="bash")
     with c2:
-        sw2_script = exp.cli_script("SW2")
+        ref_sw2 = exp.cli_script("SW2")
         st.download_button(
-            label="⬇️ Download SW2 Config (.voss)",
-            data=sw2_script,
-            file_name="sw2_fabricengine_config.voss",
-            mime="text/plain",
-            use_container_width=True,
+            "⬇️ SW2 — Reference Script (.voss)",
+            data=ref_sw2, file_name="sw2_reference.voss",
+            mime="text/plain", use_container_width=True,
         )
-        with st.expander("Preview SW2 script"):
-            st.code(sw2_script, language="bash")
+        with st.expander("Preview — SW2 reference"):
+            st.code(ref_sw2, language="bash")
 
+    # ── 3. Diff — Your session vs correct answers ─────────────────────────────
     st.markdown("---")
-    st.markdown("### 2. XIQ Network Policy (JSON)")
+    st.markdown("### 3. Diff — Your Script vs Reference")
     st.markdown(
-        "*Import via XIQ: Configure > Network Policies > Import, "
-        "or use XIQ API `POST /xapi/v1/configuration/network-policies`.*"
+        "*Lines starting with `-` are in the reference but missing from your session. "
+        "`+` lines are in your session but not in the reference (unexpected commands).*"
     )
-    xiq_json = exp.xiq_policy_json()
-    st.download_button(
-        label="⬇️ Download XIQ Policy (JSON)",
-        data=xiq_json,
-        file_name="fabricengine_xiq_policy.json",
-        mime="application/json",
-        use_container_width=False,
-    )
-    with st.expander("Preview XIQ policy JSON"):
-        st.json(xiq_json)
+    diff_tab1, diff_tab2 = st.tabs(["SW1 Diff", "SW2 Diff"])
+    with diff_tab1:
+        diff_sw1 = _build_diff(user_sw1, ref_sw1)
+        if "No differences" in diff_sw1:
+            st.success(diff_sw1)
+        else:
+            st.code(diff_sw1, language="diff")
+        st.download_button("⬇️ SW1 Diff", data=diff_sw1,
+                           file_name="sw1_diff.txt", mime="text/plain")
+    with diff_tab2:
+        diff_sw2 = _build_diff(user_sw2, ref_sw2)
+        if "No differences" in diff_sw2:
+            st.success(diff_sw2)
+        else:
+            st.code(diff_sw2, language="diff")
+        st.download_button("⬇️ SW2 Diff", data=diff_sw2,
+                           file_name="sw2_diff.txt", mime="text/plain")
 
+    # ── 4. Session Dialogue Log ────────────────────────────────────────────────
     st.markdown("---")
-    st.markdown("### 3. Deployment Checklist")
-    st.markdown("*Step-by-step verification — the 'pre-flight checklist' before going live.*")
-    checklist = exp.deployment_checklist()
-    st.download_button(
-        label="⬇️ Download Checklist (.txt)",
-        data=checklist,
-        file_name="fabricengine_deployment_checklist.txt",
-        mime="text/plain",
-        use_container_width=False,
+    st.markdown("### 4. Session Dialogue Log")
+    st.markdown(
+        "*The complete record of your session — every command you typed, "
+        "every agent response. Useful for reviewing what you learned.*"
     )
-    with st.expander("Preview checklist"):
-        st.code(checklist, language="text")
+    dialogue = _build_dialogue_log(student_name)
+    st.download_button(
+        "⬇️ Download Dialogue Log (.txt)",
+        data=dialogue, file_name="session_dialogue_log.txt",
+        mime="text/plain", use_container_width=False,
+    )
+    with st.expander("Preview dialogue log"):
+        st.code(dialogue, language="text")
 
+    # ── 5. XIQ Policy + Checklist ─────────────────────────────────────────────
     st.markdown("---")
-    st.markdown("### 4. Score Report")
+    st.markdown("### 5. XIQ Policy + Deployment Checklist")
+    c1, c2 = st.columns(2)
+    with c1:
+        xiq_json = exp.xiq_policy_json()
+        st.download_button("⬇️ XIQ Policy (JSON)", data=xiq_json,
+                           file_name="fabricengine_xiq_policy.json",
+                           mime="application/json", use_container_width=True)
+        with st.expander("Preview XIQ policy"):
+            st.json(xiq_json)
+    with c2:
+        checklist = exp.deployment_checklist()
+        st.download_button("⬇️ Deployment Checklist (.txt)", data=checklist,
+                           file_name="fabricengine_checklist.txt",
+                           mime="text/plain", use_container_width=True)
+        with st.expander("Preview checklist"):
+            st.code(checklist, language="text")
+
+    # ── 6. Score Report ────────────────────────────────────────────────────────
+    st.markdown("---")
+    st.markdown("### 6. Score Report")
     report = guidance.report()
     if report["steps"]:
         import pandas as pd
@@ -1150,7 +1310,6 @@ def page_export():
         st.dataframe(df, use_container_width=True)
     else:
         st.info("No steps completed yet.")
-
     st.markdown(f"**Total: {score} / {max_score}**")
 
     st.markdown("---")
