@@ -505,50 +505,34 @@ def page_simulator():
             unsafe_allow_html=True,
         )
 
-        # ── EXOS parallel ──────────────────────────────────────────────────────
-        with st.expander("📖 EXOS→VOSS Learning Link", expanded=False):
-            st.info(f"**From your EXOS lab:** {step.exos_parallel}")
-            st.caption(f"**Standard:** {step.standard}")
-
-        # ── 3-PLANE COCKPIT VIEW ───────────────────────────────────────────────
-        st.markdown("### ✈️ Three-Plane Cockpit View")
-        st.caption("All three planes update as you enter commands — same view as real hardware.")
-
-        render_plane_row("management", step.number, lab)
-        render_plane_row("control",    step.number, lab)
-        render_plane_row("data",       step.number, lab)
-
-        # ── Switch state panels ────────────────────────────────────────────────
-        with st.expander(f"🔵 SW1 State  |  🟣 SW2 State", expanded=False):
-            c1, c2 = st.columns(2)
-            with c1:
-                st.markdown("**SW1 — 0000.0000.0001**")
-                render_switch_state_mini(lab.sw1)
-            with c2:
-                st.markdown("**SW2 — 0000.0000.0002**")
-                render_switch_state_mini(lab.sw2)
-            health = lab.health_summary()
-            adj_col = "green" if health["ISIS adjacency"] == "UP" else "red"
+        # ══════════════════════════════════════════════════════════════════════
+        # ACTION REQUIRED — always first, always visible
+        # ══════════════════════════════════════════════════════════════════════
+        if step.is_narrative:
+            dest_label = "⚠️  DESTRUCTIVE STEP — no undo" if step.is_destructive else "📋  READ & CONFIRM"
+            dest_color = "#7f1d1d" if step.is_destructive else "#1e3a5f"
+            dest_border = "#ef4444" if step.is_destructive else "#326891"
             st.markdown(
-                f'<span style="color:{adj_col};font-weight:700">ISIS adjacency: {health["ISIS adjacency"]}</span>'
-                f' &nbsp;|&nbsp; Fabric services: {health["Fabric services visible"]}'
-                f' &nbsp;|&nbsp; E2E: {health["E2E connectivity"]}',
+                f"""
+                <div style="background:{dest_color};border:2px solid {dest_border};
+                            border-radius:8px;padding:18px 20px;margin:12px 0">
+                  <div style="color:#fff;font-size:0.72rem;letter-spacing:0.2em;
+                              text-transform:uppercase;font-weight:700;margin-bottom:8px">
+                    {dest_label}
+                  </div>
+                  <div style="color:#e2e8f0;font-size:0.95rem;line-height:1.6">
+                    {step.description}
+                  </div>
+                </div>
+                """,
                 unsafe_allow_html=True,
             )
-            if health["Adjacency failure reason"] != "n/a":
-                st.error(f"Fault: {health['Adjacency failure reason']}")
-
-        st.markdown("---")
-
-        # ── CLI INPUT AREA ─────────────────────────────────────────────────────
-        st.markdown(f"#### [{sw_id}]#  CLI Input")
-
-        if step.is_narrative:
-            st.markdown(
-                f"*This is a {'⚠️ **destructive**' if step.is_destructive else 'narrative'} step. "
-                "Review the cockpit view above and click Confirm to proceed.*"
-            )
-            if st.button("✅ Confirm & Continue", use_container_width=True):
+            if st.button(
+                "✅  Confirm & Continue →",
+                use_container_width=True,
+                type="primary",
+                key="confirm_narrative",
+            ):
                 for sid in step.applies_to:
                     sm.mark_confirmed(sid)
                 if sm.can_advance():
@@ -567,9 +551,40 @@ def page_simulator():
             prog_obj = sm.step_progress(sw_id)
             next_idx = prog_obj.next_command_index if prog_obj else 0
 
-            if next_idx is not None and next_idx < len(expected_cmds):
-                st.caption(f"Next expected command ({next_idx + 1}/{len(expected_cmds)}): "
-                           f"`{expected_cmds[next_idx]}`  ← *type below or ask for a hint*")
+            # Build command checklist HTML
+            cmd_rows = ""
+            for i, cmd in enumerate(expected_cmds):
+                if prog_obj and i < (next_idx or 0):
+                    icon = "✅"
+                    style = "color:#4ade80;text-decoration:line-through;opacity:0.7"
+                elif i == (next_idx or 0):
+                    icon = "▶"
+                    style = "color:#fbbf24;font-weight:700"
+                else:
+                    style = "color:#94a3b8"
+                    icon = "○"
+                cmd_rows += (
+                    f'<div style="font-family:monospace;font-size:0.9rem;'
+                    f'padding:4px 0;{style}">'
+                    f'{icon}  {cmd}</div>\n'
+                )
+
+            st.markdown(
+                f"""
+                <div style="background:#0f172a;border:2px solid #326891;
+                            border-radius:8px;padding:16px 20px;margin:12px 0">
+                  <div style="color:#60a5fa;font-size:0.7rem;letter-spacing:0.2em;
+                              text-transform:uppercase;font-weight:700;margin-bottom:10px">
+                    🖥  TYPE THESE COMMANDS NOW  —  [{sw_id}]  ({next_idx or 0}/{len(expected_cmds)} done)
+                  </div>
+                  {cmd_rows}
+                  <div style="color:#64748b;font-size:0.75rem;margin-top:10px">
+                    ▶ = type next · ✅ = done · you can also type: show &lt;cmd&gt; · hint · sw1 / sw2
+                  </div>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
 
             with st.form("cli_form", clear_on_submit=True):
                 cmd_input = st.text_input(
@@ -666,6 +681,38 @@ def page_simulator():
                     f'{st.session_state.show_output}</div>',
                     unsafe_allow_html=True,
                 )
+
+        # ── EXOS parallel ──────────────────────────────────────────────────────
+        with st.expander("📖 EXOS→VOSS Learning Link", expanded=False):
+            st.info(f"**From your EXOS lab:** {step.exos_parallel}")
+            st.caption(f"**Standard:** {step.standard}")
+
+        # ── 3-PLANE COCKPIT VIEW ───────────────────────────────────────────────
+        with st.expander("✈️ Three-Plane Cockpit View", expanded=True):
+            st.caption("All three planes update as you enter commands — same view as real hardware.")
+            render_plane_row("management", step.number, lab)
+            render_plane_row("control",    step.number, lab)
+            render_plane_row("data",       step.number, lab)
+
+        # ── Switch state panels ────────────────────────────────────────────────
+        with st.expander("🔵 SW1 State  |  🟣 SW2 State", expanded=False):
+            c1, c2 = st.columns(2)
+            with c1:
+                st.markdown("**SW1 — 0000.0000.0001**")
+                render_switch_state_mini(lab.sw1)
+            with c2:
+                st.markdown("**SW2 — 0000.0000.0002**")
+                render_switch_state_mini(lab.sw2)
+            health = lab.health_summary()
+            adj_col = "green" if health["ISIS adjacency"] == "UP" else "red"
+            st.markdown(
+                f'<span style="color:{adj_col};font-weight:700">ISIS adjacency: {health["ISIS adjacency"]}</span>'
+                f' &nbsp;|&nbsp; Fabric services: {health["Fabric services visible"]}'
+                f' &nbsp;|&nbsp; E2E: {health["E2E connectivity"]}',
+                unsafe_allow_html=True,
+            )
+            if health["Adjacency failure reason"] != "n/a":
+                st.error(f"Fault: {health['Adjacency failure reason']}")
 
         # ── Command history ────────────────────────────────────────────────────
         if st.session_state.command_history:
