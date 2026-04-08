@@ -462,21 +462,29 @@ FA:  Fabric Attach (IEEE 802.1Qcj) — AP auto-provisions VLAN/I-SID, no manual 
 
     st.markdown("---")
 
-    # ── Login ──────────────────────────────────────────────────────────────────
+    # ── Login / Return ─────────────────────────────────────────────────────────
     st.markdown("### Start the Simulation")
-    with st.form("login_form"):
-        name = st.text_input("Your name (for session report)", placeholder="e.g. Khursheed Khan")
-        user = st.text_input("Username")
-        pwd  = st.text_input("Password", type="password")
-        submitted = st.form_submit_button("🚀 Enter the Simulator", use_container_width=True)
-        if submitted:
-            if user == ADMIN_USER and pwd == ADMIN_PASS:
-                st.session_state.authenticated = True
-                st.session_state.student_name = name or "Lab Engineer"
-                st.session_state.page = "simulator"
-                st.rerun()
-            else:
-                st.error("Invalid credentials. Contact your lab administrator.")
+    if st.session_state.get("authenticated"):
+        sm = st.session_state.get("sm")
+        step_num = sm.current_step_number if sm else 1
+        st.success(f"✅ Logged in as **{st.session_state.student_name}** — Step {step_num}/18")
+        if st.button("↩ Return to Simulator", use_container_width=True, type="primary"):
+            st.session_state.page = "simulator"
+            st.rerun()
+    else:
+        with st.form("login_form"):
+            name = st.text_input("Your name (for session report)", placeholder="e.g. Khursheed Khan")
+            user = st.text_input("Username")
+            pwd  = st.text_input("Password", type="password")
+            submitted = st.form_submit_button("🚀 Enter the Simulator", use_container_width=True)
+            if submitted:
+                if user == ADMIN_USER and pwd == ADMIN_PASS:
+                    st.session_state.authenticated = True
+                    st.session_state.student_name = name or "Lab Engineer"
+                    st.session_state.page = "simulator"
+                    st.rerun()
+                else:
+                    st.error("Invalid credentials. Contact your lab administrator.")
 
 
 # ─────────────────────────────────────────────────────────────────────────────
