@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Khursheed Khan — EXOS → VOSS/FabricEngine Migration | Extreme Networks 5320</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Libre+Franklin:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Libre Franklin', Arial, sans-serif; background: #FFFFFF; color: #111111; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 48px 24px 72px; }
+  .container { max-width: 860px; width: 100%; }
+
+  /* Masthead */
+  .nyt-rule-top { border: none; border-top: 3px solid #111; margin-bottom: 6px; }
+  .nyt-rule-thin { border: none; border-top: 1px solid #111; margin-bottom: 18px; }
+  .nyt-logo { font-family: 'Libre Franklin', Arial, sans-serif; font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.22em; color: #666; text-align: center; margin-bottom: 6px; }
+  .byline { font-family: 'Libre Franklin', Arial, sans-serif; font-size: 0.72rem; color: #666; margin-bottom: 14px; letter-spacing: 0.02em; }
+  .byline strong { color: #111; font-weight: 700; }
+
+  h1 { font-family: 'Libre Baskerville', Georgia, serif; font-size: 2.4rem; font-weight: 700; color: #111; line-height: 1.15; margin-bottom: 14px; }
+  .subtitle { font-family: 'Libre Baskerville', Georgia, serif; font-size: 1.0rem; font-style: italic; color: #444; line-height: 1.8; margin-bottom: 20px; border-bottom: 1px solid #E2E2E2; padding-bottom: 28px; }
+
+  /* Section labels */
+  .section-label { font-family: 'Libre Franklin', Arial, sans-serif; font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.18em; color: #326891; margin-bottom: 16px; margin-top: 36px; padding-bottom: 6px; border-bottom: 2px solid #326891; display: block; }
+
+  /* Cards */
+  .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+  @media (max-width: 540px) { .cards { grid-template-columns: 1fr; } }
+  .card { background: #FFFFFF; border: 1px solid #E2E2E2; margin: -1px 0 0 -1px; padding: 20px; text-decoration: none; display: flex; flex-direction: column; transition: background 0.12s; }
+  .card:hover { background: #F7F7F5; }
+  .card .card-label { font-family: 'Libre Franklin', Arial, sans-serif; font-size: 0.58rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; color: #326891; margin-bottom: 7px; }
+  .card h2 { font-family: 'Libre Baskerville', Georgia, serif; font-size: 1.0rem; font-weight: 700; color: #111; margin-bottom: 8px; line-height: 1.35; }
+  .card p { font-family: 'Libre Franklin', Arial, sans-serif; color: #555; font-size: 0.82rem; line-height: 1.65; flex: 1; }
+  .card .cta { margin-top: 12px; font-family: 'Libre Franklin', Arial, sans-serif; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #326891; }
+
+  /* Status badge */
+  .status { display: inline-block; font-family: 'Libre Franklin', Arial, sans-serif; font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; padding: 2px 8px; border-radius: 3px; margin-bottom: 10px; }
+  .status-planned { background: #EBF4FA; color: #326891; border: 1px solid #B8D4E8; }
+  .status-live { background: #F0FBF4; color: #1a5c2a; border: 1px solid #b8e0c6; }
+  .status-wip { background: #FFF8E1; color: #7a5a00; border: 1px solid #F9D84A; }
+
+  /* Comparison table */
+  table { width: 100%; border-collapse: collapse; font-family: 'Libre Franklin', Arial, sans-serif; font-size: 0.82rem; margin: 16px 0 28px; }
+  thead tr { background: #F7F7F5; }
+  th { padding: 10px 14px; text-align: left; font-weight: 700; color: #111; border: 1px solid #E2E2E2; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; }
+  td { padding: 9px 14px; border: 1px solid #E2E2E2; color: #333; line-height: 1.5; }
+  td:first-child { font-weight: 600; color: #111; white-space: nowrap; }
+  code { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 0.78em; background: #F7F7F5; color: #326891; padding: 1px 5px; border-radius: 3px; border: 1px solid #E2E2E2; }
+
+  /* Lab state box */
+  .state-box { background: #F7F7F5; border: 1px solid #E2E2E2; border-left: 4px solid #326891; border-radius: 4px; padding: 18px 20px; margin: 20px 0; }
+  .state-box h3 { font-family: 'Libre Baskerville', Georgia, serif; font-size: 0.95rem; color: #111; margin-bottom: 10px; }
+  .state-box ul { padding-left: 18px; color: #555; font-size: 0.83rem; line-height: 1.9; }
+  .state-box ul li strong { color: #111; }
+
+  /* Divider */
+  .divider { border: none; border-top: 1px solid #E2E2E2; margin: 36px 0; }
+
+  /* Footer */
+  .refs { text-align: center; font-family: 'Libre Franklin', Arial, sans-serif; margin-top: 48px; }
+  .refs p { color: #999; font-size: 0.72rem; margin-bottom: 8px; }
+  .refs a { color: #326891; font-size: 0.75rem; text-decoration: none; margin: 0 10px; }
+  .refs a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <hr class="nyt-rule-top">
+  <div class="nyt-logo">Extreme Networks Lab Series &nbsp;·&nbsp; Khursheed Khan</div>
+  <hr class="nyt-rule-thin">
+
+  <div class="byline">
+    <strong>By Khursheed Khan</strong> &nbsp;·&nbsp; April 2026 &nbsp;·&nbsp; Extreme Networks 5320
+  </div>
+
+  <h1>EXOS/SwitchEngine → VOSS/FabricEngine Migration</h1>
+  <p class="subtitle">
+    A hands-on migration of a two-switch, two-AP lab from EXOS SwitchEngine 33.x to VOSS/FabricEngine —
+    rebuilding VLANs as I-SIDs, routing via SPB, and preserving full XIQ-managed AP3000 connectivity
+    across Corp, Guest, Corp2, and Guest2 SSIDs. Every step references the
+    <a href="https://khursheedkhanaiforgood-ai.github.io/5320-onboarding/" target="_blank" style="color:#326891">completed EXOS deployment</a>
+    as the learning baseline — same hardware, same XIQ org, same Quantum Fiber network.
+  </p>
+
+  <!-- Current Lab State -->
+  <span class="section-label">Starting Point — EXOS Lab (April 2026)</span>
+  <div class="state-box">
+    <h3>Deployed Lab — 2 Switches · 2 APs · 4 SSIDs</h3>
+    <ul>
+      <li><strong>SW1</strong> — 5320-16P-2MXT-2X @ 192.168.0.28 · VLANs 20 (Corp) + 30 (Guest) · AP3000 on port 3</li>
+      <li><strong>SW2</strong> — 5320-16P-2MXT-2X @ 192.168.0.11 · VLANs 50 (Corp2) + 60 (Guest2) · AP3000 on port 3</li>
+      <li><strong>VLAN 10</strong> — SW_VLAN_10_Mgmt · SVIs 10.10.0.1 / 10.10.0.2 · Inter-switch management</li>
+      <li><strong>DHCP</strong> — CLI-configured on both switches · XIQ manages VLANs/port types/AP policies</li>
+      <li><strong>Internet</strong> — Verified on all 4 SSIDs via Quantum Fiber + static routes</li>
+    </ul>
+  </div>
+
+  <!-- EXOS vs VOSS comparison -->
+  <span class="section-label">EXOS vs VOSS/FabricEngine — Key Differences</span>
+  <table>
+    <thead>
+      <tr><th>Concept</th><th>EXOS / SwitchEngine</th><th>VOSS / FabricEngine</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>CLI mode</td><td>EXOS flat CLI</td><td>VSP hierarchical CLI (acli / vlan / router isis)</td></tr>
+      <tr><td>VLANs</td><td>Named VLANs (create vlan)</td><td>VLANs + I-SIDs (Service Instance IDs for SPB fabric)</td></tr>
+      <tr><td>L3 routing</td><td><code>enable ipforwarding vlan X</code></td><td>IP interfaces under VLAN + VRF-aware routing</td></tr>
+      <tr><td>DHCP server</td><td><code>configure vlan X dhcp-address-range</code></td><td><code>ip dhcp-server</code> under interface VLAN</td></tr>
+      <tr><td>Default route</td><td>Auto via DHCP/BOOTP (<code>bo</code> origin)</td><td>Static or OSPFv2/BGP in VRF GlobalRouter</td></tr>
+      <tr><td>Fabric</td><td>No fabric — pure L2/L3</td><td>SPB (IEEE 802.1aq) IS-IS-based fabric</td></tr>
+      <tr><td>Management</td><td>XIQ ZTP+ via VLAN 1</td><td>XIQ ZTP+ via VLAN 1 (same)</td></tr>
+      <tr><td>Factory reset</td><td><code>delete /intflash/config.cfg → boot</code></td><td><code>reset</code> or delete nvram config</td></tr>
+      <tr><td>Port config</td><td>EXOS port types via XIQ</td><td>Port types via XIQ (same XIQ workflow)</td></tr>
+    </tbody>
+  </table>
+
+  <!-- Migration phases -->
+  <span class="section-label">Migration Phases</span>
+  <div class="cards" style="grid-template-columns:1fr 1fr 1fr">
+    <a class="card" href="#" style="pointer-events:none;opacity:0.7">
+      <span class="status status-planned">Planned</span>
+      <div class="card-label">Phase 1</div>
+      <h2>Factory Reset → FabricEngine ZTP+</h2>
+      <p>Reset both 5320s back to FabricEngine (if firmware supports dual-boot), or re-flash. ZTP+ re-adoption in XIQ under FabricEngine persona.</p>
+      <div class="cta">Coming soon →</div>
+    </a>
+    <a class="card" href="#" style="pointer-events:none;opacity:0.7">
+      <span class="status status-planned">Planned</span>
+      <div class="card-label">Phase 2</div>
+      <h2>SPB Fabric + VLAN/I-SID Design</h2>
+      <p>Rebuild VLANs 10/20/30/50/60 as I-SIDs. Configure SPB backbone between SW1 and SW2. Verify ISIS adjacency and BEB/BCB roles.</p>
+      <div class="cta">Coming soon →</div>
+    </a>
+    <a class="card" href="#" style="pointer-events:none;opacity:0.7">
+      <span class="status status-planned">Planned</span>
+      <div class="card-label">Phase 3</div>
+      <h2>DHCP + Routing + AP Verification</h2>
+      <p>Rebuild DHCP server, default gateway, IP forwarding. Re-adopt AP3000s via XIQ. Verify all 4 SSIDs and iPhone internet on FabricEngine.</p>
+      <div class="cta">Coming soon →</div>
+    </a>
+  </div>
+
+  <hr class="divider">
+
+  <!-- Reference to source project -->
+  <span class="section-label">Source Project — EXOS Lab Reference</span>
+  <div class="cards">
+    <a class="card" href="https://khursheedkhanaiforgood-ai.github.io/5320-onboarding/" target="_blank">
+      <div class="card-label">5320 Onboarding — EXOS/SwitchEngine</div>
+      <h2>Source Lab: 5320 Onboarding Guide</h2>
+      <p>Full EXOS deployment reference — XIQ onboarding, VLAN/DHCP/routing config, session logs for Mar 29, Apr 7, and Apr 8 2026. This is the baseline being migrated.</p>
+      <div class="cta">View source project &#8599;</div>
+    </a>
+    <a class="card" href="https://khursheedkhanaiforgood-ai.github.io/5320-onboarding/lab_20260329.html" target="_blank">
+      <div class="card-label">Lab Guide — Mar 29 → Apr 8 2026</div>
+      <h2>EXOS Lab Guide + Apr 7–8 Sessions</h2>
+      <p>Step-by-step EXOS lab: dual-switch + 2×AP3000, VLANs 10/20/30/50/60, XIQ policy config, DHCP/routing CLI commands, and E2E architecture diagram.</p>
+      <div class="cta">View lab guide &#8599;</div>
+    </a>
+  </div>
+
+  <hr class="divider">
+
+  <div class="refs">
+    <p>Built with Claude Code &mdash; April 2026 &mdash; Extreme Networks Lab Series</p>
+    <a href="https://github.com/khursheedkhanaiforgood-ai/voss-fabric-migration" target="_blank">GitHub &#8599;</a>
+    <a href="https://khursheedkhanaiforgood-ai.github.io/5320-onboarding/" target="_blank">5320 Source Project &#8599;</a>
+  </div>
+
+</div>
+</body>
+</html>
