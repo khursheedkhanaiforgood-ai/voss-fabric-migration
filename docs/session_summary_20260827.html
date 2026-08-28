@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Session Summary — 27 August 2026</title>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Libre Baskerville', Georgia, serif;
+      background: #fff;
+      color: #1a1a1a;
+      font-size: 17px;
+      line-height: 1.75;
+    }
+
+    header {
+      border-top: 4px solid #1a1a1a;
+      border-bottom: 1px solid #ccc;
+      padding: 2rem 0 1.2rem;
+      text-align: center;
+      margin-bottom: 0;
+    }
+    header .kicker {
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #555;
+      margin-bottom: 0.5rem;
+    }
+    header h1 {
+      font-size: 2.3rem;
+      font-weight: 700;
+      line-height: 1.2;
+      max-width: 820px;
+      margin: 0 auto 0.6rem;
+    }
+    header .subtitle {
+      font-style: italic;
+      color: #444;
+      font-size: 1rem;
+      max-width: 680px;
+      margin: 0.4rem auto 0.8rem;
+      line-height: 1.7;
+    }
+    header .byline {
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 0.85rem;
+      color: #555;
+    }
+    header .byline span { color: #1a1a1a; font-weight: 600; }
+
+    .container {
+      max-width: 880px;
+      margin: 0 auto;
+      padding: 0 1.5rem 4rem;
+    }
+
+    nav#toc {
+      position: sticky;
+      top: 0;
+      background: #fff;
+      border-bottom: 1px solid #ddd;
+      padding: 0.6rem 0;
+      z-index: 100;
+      margin-bottom: 2.5rem;
+    }
+    nav#toc ul {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3rem 1.2rem;
+      list-style: none;
+      justify-content: center;
+    }
+    nav#toc a {
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: #1a1a1a;
+      text-decoration: none;
+      padding: 0.2rem 0;
+      border-bottom: 2px solid transparent;
+      transition: border-color 0.15s;
+    }
+    nav#toc a:hover { border-color: #326891; color: #326891; }
+
+    section { margin-bottom: 3rem; }
+
+    .section-label {
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: #326891;
+      border-bottom: 2px solid #326891;
+      padding-bottom: 4px;
+      margin-bottom: 1.2rem;
+    }
+
+    h2 {
+      font-size: 1.55rem;
+      font-weight: 700;
+      margin-bottom: 0.8rem;
+      margin-top: 0.2rem;
+    }
+
+    h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin: 1.4rem 0 0.5rem;
+    }
+
+    p { margin-bottom: 1rem; }
+    p:last-child { margin-bottom: 0; }
+
+    ul, ol { padding-left: 1.4rem; margin-bottom: 1rem; }
+    li { margin-bottom: 0.4rem; }
+
+    .box {
+      border-left: 4px solid #326891;
+      background: #f0f6fb;
+      padding: 0.9rem 1.1rem;
+      margin: 1.2rem 0;
+      border-radius: 0 4px 4px 0;
+    }
+    .box.warn {
+      border-color: #c87d00;
+      background: #fffbf0;
+    }
+    .box.ok {
+      border-color: #2e7d32;
+      background: #f1faf1;
+    }
+    .box.blocked {
+      border-color: #b71c1c;
+      background: #fdf3f3;
+    }
+    .box strong {
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 0.35rem;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 1rem;
+      margin: 1.5rem 0 2rem;
+    }
+    .stat-card {
+      text-align: center;
+      border: 1px solid #e2e2e2;
+      padding: 1rem 0.5rem;
+      border-radius: 4px;
+    }
+    .stat-num {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #326891;
+      line-height: 1;
+      margin-bottom: 0.3rem;
+    }
+    .stat-label {
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #666;
+    }
+
+    code, pre {
+      font-family: 'Courier New', monospace;
+      font-size: 0.88rem;
+    }
+    pre {
+      background: #f5f5f5;
+      border: 1px solid #e0e0e0;
+      padding: 1rem 1.2rem;
+      border-radius: 4px;
+      overflow-x: auto;
+      margin: 1rem 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+      margin: 1rem 0;
+    }
+    th {
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      background: #f5f5f5;
+      border: 1px solid #ddd;
+      padding: 0.5rem 0.8rem;
+      text-align: left;
+    }
+    td {
+      border: 1px solid #ddd;
+      padding: 0.5rem 0.8rem;
+      vertical-align: top;
+    }
+    tr:nth-child(even) td { background: #fafafa; }
+
+    .status-ok   { color: #2e7d32; font-weight: 700; }
+    .status-fail { color: #b71c1c; font-weight: 700; }
+    .status-warn { color: #c87d00; font-weight: 700; }
+
+    footer {
+      border-top: 1px solid #ccc;
+      padding-top: 1.5rem;
+      margin-top: 4rem;
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 0.8rem;
+      color: #777;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <p class="kicker">Lab Session Journal &nbsp;·&nbsp; Extreme Networks Home Lab</p>
+  <h1>UZTNA Build-Out on 5320_MyLab + AP_3000_MyLab</h1>
+  <p class="subtitle">Basic EXOS access-port topology verified end to end with a working SSID test, then Universal ZTNA (Enterprise 802.1X + EAP-TTLS + Captive Web Portal) wired into the AP policy — VLAN10 rollout deliberately deferred until DHCP is actually ready on the switch.</p>
+  <p class="byline">By <span>Khursheed Khan</span> &nbsp;·&nbsp; 27 August 2026</p>
+</header>
+
+<div class="container">
+
+  <nav id="toc">
+    <ul>
+      <li><a href="#accomplished">Accomplished</a></li>
+      <li><a href="#topology">Topology</a></li>
+      <li><a href="#ports">Port Verification</a></li>
+      <li><a href="#capwap">CAPWAP Troubleshooting</a></li>
+      <li><a href="#uztna">UZTNA Design Decisions</a></li>
+      <li><a href="#policy">AP_EXOS_Aug27_UZTNA Policy</a></li>
+      <li><a href="#commands">Commands</a></li>
+      <li><a href="#pending">Pending — Tomorrow Morning</a></li>
+    </ul>
+  </nav>
+
+  <!-- ACCOMPLISHED -->
+  <section id="accomplished">
+    <p class="section-label">Accomplished</p>
+    <h2>What Got Done</h2>
+
+    <div class="stats">
+      <div class="stat-card"><div class="stat-num">2</div><div class="stat-label">Ports Verified Untagged</div></div>
+      <div class="stat-card"><div class="stat-num">1</div><div class="stat-label">SSID Test — Working</div></div>
+      <div class="stat-card"><div class="stat-num">2</div><div class="stat-label">Auth Methods Compared</div></div>
+      <div class="stat-card"><div class="stat-num">8</div><div class="stat-label">Legacy Demo Profiles Flagged</div></div>
+    </div>
+
+    <ul>
+      <li><strong>5320_MyLab port plan corrected</strong> — ports 1 (uplink) and 3 (AP3000) both confirmed access/untagged on Default VLAN only, via <code>show vlan Default</code> and <code>show ports information</code>.</li>
+      <li><strong>First SSID test succeeded end to end</strong> — AP_3000_MyLab reached EP1 over CAPWAP, broadcast a simple open SSID on Default VLAN, and a client pulled a 192.168.0.x address from the home router (QF-Modem) via straight L2 bridging — no switch-side DHCP or IP forwarding required for this hop.</li>
+      <li><strong>CAPWAP "revert to default" investigated</strong> — ruled out the documented 15-minute CAPWAP-rollback timer (connectivity never actually dropped) and ruled out device-level override (checked <code>Manage → Devices → AP_3000_MyLab → Configure</code>, none present). Leading theory going forward: policy needs an explicit resave + redeploy cycle, or a "Complete Configuration Push."</li>
+      <li><strong>UZTNA auth architecture decided</strong> — confirmed via Extreme KB that Platform ONE Security's native cloud PKI supports EAP-TLS without any external IdP (Entra/Okta/Google not required), but pivoted to <strong>EAP-TTLS</strong> once the requirement became "no certs distributed to clients." Also confirmed CWP requiring RADIUS auth must stay on an Enterprise 802.1X SSID — Open + CWP is not a supported combination for this.</li>
+      <li><strong>Local user / group / password model clarified</strong> — password lives on the individual local user record, never on the group. Group membership (e.g. <code>Policy_TeamUSA</code>) only drives the RADIUS <code>Filter-Id</code> value returned on successful auth, which the SSID's assignment rule maps to a VLAN.</li>
+      <li><strong>Deliberate scope decision</strong> — defer pushing any client into UZTNA_10 until the DHCP Supplemental CLI is actually live on the switch. Tonight's push is Wireless-config only; Switching/Routing step of the policy wizard is being skipped.</li>
+    </ul>
+  </section>
+
+  <!-- TOPOLOGY -->
+  <section id="topology">
+    <p class="section-label">Topology</p>
+    <h2>Lab Layout — 5320_MyLab + AP_3000_MyLab</h2>
+
+    <table>
+      <tr><th>Device</th><th>Role</th><th>State</th></tr>
+      <tr>
+        <td>5320_Exos_MyLab (port 1)</td>
+        <td>Uplink to home router (internet)</td>
+        <td><span class="status-ok">Access/untagged, Default VLAN — verified</span></td>
+      </tr>
+      <tr>
+        <td>5320_Exos_MyLab (port 3)</td>
+        <td>AP_3000_MyLab connection</td>
+        <td><span class="status-ok">Access/untagged, Default VLAN — verified, CAPWAP up</span></td>
+      </tr>
+      <tr>
+        <td>VLAN Default (1)</td>
+        <td>Management + first SSID test</td>
+        <td>192.168.0.28/24 — 2 active ports (1, 3)</td>
+      </tr>
+      <tr>
+        <td>VLAN UZTNA_10 (10)</td>
+        <td>Future client VLAN for UZTNA-assigned users</td>
+        <td><span class="status-warn">SVI 10.10.10.1/24 exists, IP forwarding already enabled — 0 ports assigned, no DHCP yet</span></td>
+      </tr>
+    </table>
+
+    <p>SSID under test: <code>AP_EXOS_Aug27_UZTNA</code> policy, RADIUS Server Group <code>UZTNA-RadsecServerGroup</code>, Captive Web Portal <code>UZTNA</code>.</p>
+  </section>
+
+  <!-- PORT VERIFICATION -->
+  <section id="ports">
+    <p class="section-label">Port Verification</p>
+    <h2>Confirming Ports 1 &amp; 3 Are Untagged-Only</h2>
+
+    <p>Two commands confirmed the port plan before any policy push:</p>
+
+    <h3><code>show vlan Default</code></h3>
+    <pre>Ports:   20.  (Number of active ports=2)
+   Untag:  *1, 2b, *3, 4b, 5b, ...</pre>
+    <p>Everything listed sits under the single <strong>Untag:</strong> heading — no separate Tagged: list exists at all. <code>*</code> = active; <code>b</code> = blocked/unused. Ports 1 and 3 are both active, untagged, Default-VLAN-only.</p>
+
+    <h3><code>show ports 1,3 information</code></h3>
+    <pre>Port 1: Num VLAN = 1
+Port 3: Num VLAN = 1</pre>
+    <p>Each port belongs to exactly one VLAN. If UZTNA_10 were tagged onto either port, this would read <code>2</code>. Confirms zero VLAN leakage.</p>
+
+    <div class="box ok">
+      <strong>Clarified — L2 Switching vs IP Forwarding vs Port Forwarding</strong>
+      Client-to-home-router traffic on Default VLAN is pure Layer 2 bridging (both ports untagged, same broadcast domain) — no routing, no <code>enable ipforwarding</code> needed. That command only matters later, when UZTNA_10 traffic has to cross into Default to reach the internet. "Port forwarding" as a per-port toggle doesn't apply here at all; the relevant flags (<code>f</code>/<code>M</code>/<code>B</code> flooding, Layer 2 Forwarding Enabled) were already on by default.
+    </div>
+  </section>
+
+  <!-- CAPWAP TROUBLESHOOTING -->
+  <section id="capwap">
+    <p class="section-label">CAPWAP Troubleshooting</p>
+    <h2>"AP Loses CAPWAP / Reverts to Default" — Investigated</h2>
+
+    <p>This symptom recurred from a prior VOSS session. Worked through two documented EP1/ExtremeCloud IQ mechanisms:</p>
+
+    <table>
+      <tr><th>Theory</th><th>Mechanism</th><th>Verdict</th></tr>
+      <tr>
+        <td>CAPWAP rollback timer</td>
+        <td>If the AP can't reconnect to its CAPWAP server within 15 minutes of a policy-push reboot, it auto-rolls-back to the previous config and reboots again.</td>
+        <td><span class="status-fail">Ruled out — CAPWAP reconnects fine every time</span></td>
+      </tr>
+      <tr>
+        <td>Device-level override</td>
+        <td>Settings under <code>Manage → Devices → &lt;device&gt; → Configure</code> override the network policy template for that device only, until explicitly cleared.</td>
+        <td><span class="status-fail">Ruled out — no device-level config present on AP_3000_MyLab</span></td>
+      </tr>
+      <tr>
+        <td>Resave + redeploy required</td>
+        <td>Some network-policy changes reportedly need a second save cycle and an explicit redeploy (or a "Complete Configuration Push" that writes the full startup config) before they take effect.</td>
+        <td><span class="status-warn">Not yet tested — leading theory for next push</span></td>
+      </tr>
+    </table>
+
+    <div class="box warn">
+      <strong>Firmware Check Needed Before Next Push</strong>
+      WPA3-802.1X requires AP3000 IQ Engine ≥8.4r8; Direct Tunnel (vs. Legacy Proxy) requires IQ Engine ≥10.8.7. If the AP is below either threshold, EP1 silently withholds the SSID rather than erroring — which can look identical to a "revert." AP3000's current firmware version was not confirmed this session.
+    </div>
+  </section>
+
+  <!-- UZTNA DESIGN DECISIONS -->
+  <section id="uztna">
+    <p class="section-label">UZTNA Design Decisions</p>
+    <h2>EAP-TLS vs EAP-TTLS, and Open+CWP vs 802.1X+CWP</h2>
+
+    <h3>Auth Method — Landed on EAP-TTLS</h3>
+    <table>
+      <tr><th></th><th>EAP-TLS</th><th>EAP-TTLS (chosen)</th></tr>
+      <tr>
+        <td>Client cert required</td>
+        <td>Yes — every device needs one issued</td>
+        <td>No — username/password only</td>
+      </tr>
+      <tr>
+        <td>Backing infrastructure</td>
+        <td>Platform ONE Security native cloud PKI (confirmed available without external IdP, but flagged as a possible add-on subscription)</td>
+        <td>Local user directory in Platform ONE Security</td>
+      </tr>
+      <tr>
+        <td>Why chosen</td>
+        <td>—</td>
+        <td>Explicit requirement: no certs to be supplied/distributed to client devices</td>
+      </tr>
+    </table>
+
+    <h3>SSID Security Type — Enterprise 802.1X, not Open</h3>
+    <div class="box blocked">
+      <strong>Corrected Assumption</strong>
+      Plan was "keep SSID Open, add a CWP for username/password." Extreme's own documentation states a RADIUS-authenticated CWP requires the SSID to be Enterprise 802.1X — Open SSIDs cannot carry a RADIUS-backed CWP. Kept the SSID as Enterprise 802.1X (already configured) and layered the CWP on top, rather than switching to Open.
+    </div>
+
+    <h3>User → Group → VLAN Resolution Chain</h3>
+    <ol>
+      <li>Client authenticates (EAP-TTLS username/password, or CWP browser login) against the AP's RADIUS Server Group <code>UZTNA-RadsecServerGroup</code></li>
+      <li>UZTNA backend validates the individual local user's password</li>
+      <li>UZTNA resolves that user's group membership (e.g. <code>Policy_TeamUSA</code>)</li>
+      <li>Access-Accept returns <code>Filter-Id = Policy_TeamUSA</code></li>
+      <li>SSID's User Access Settings assignment rule maps that Filter-Id to VLAN <code>UZTNA_10</code></li>
+      <li>AP tags the client's traffic accordingly on its uplink port — <strong>which requires the switch to actually have UZTNA_10 tagged on that port and DHCP running, neither of which is live yet</strong></li>
+    </ol>
+  </section>
+
+  <!-- POLICY CONFIG -->
+  <section id="policy">
+    <p class="section-label">Policy Configuration</p>
+    <h2>AP_EXOS_Aug27_UZTNA — Current State</h2>
+
+    <table>
+      <tr><th>Field</th><th>Value / State</th></tr>
+      <tr><td>RADIUS Server Group</td><td><code>UZTNA-RadsecServerGroup</code></td></tr>
+      <tr><td>Captive Web Portal</td><td><code>UZTNA</code> (Enable UPA option available, not yet decided)</td></tr>
+      <tr><td>SSID Authentication</td><td>Enterprise, Key Management 802.1X (WPA2 vs WPA3 pending firmware check)</td></tr>
+      <tr><td>Authentication Settings</td><td>"Authentication with Extreme Platform ONE Security" — Direct Tunnel vs Legacy Proxy pending firmware check</td></tr>
+      <tr><td>RADIUS attribute for VLAN assignment</td><td><code>11_Filter-Id</code>, single-attribute mode (not the 3-tuple Tunnel-Type method)</td></tr>
+      <tr><td>Default User Profile</td><td>Default VLAN (1) — intentionally <em>not</em> UZTNA_10 yet</td></tr>
+      <tr><td>SSID Name / Broadcast Name</td><td><span class="status-warn">Still blank — must be filled in before next deploy</span></td></tr>
+    </table>
+
+    <div class="box warn">
+      <strong>Legacy/Template Clutter Flagged, Not Yet Resolved</strong>
+      The User Access Settings table already contains 8 profile-assignment rows — <code>UZTNA_Policy_TeamUSA→UZTNA_10</code>, <code>TeamAUS→UZTNA_20</code>, <code>VIP→UZTNA_40</code>, <code>Guest→UZTNA_30</code>, <code>POS→UZTNA_50</code>, plus several generic <code>Test_UZTNA</code> entries (one dated today). Unclear whether this is an intentional Extreme demo template (sports-venue UZTNA use case) or leftover clutter from earlier exploration. Not cleaned up this session — <code>Policy_TeamUSA</code> is being reused as-is for the exercise since it already maps to UZTNA_10.
+    </div>
+  </section>
+
+  <!-- COMMANDS -->
+  <section id="commands">
+    <p class="section-label">Commands</p>
+    <h2>Recovered / Verified CLI This Session</h2>
+
+    <h3>Port verification (5320_Exos_MyLab)</h3>
+    <pre>show vlan
+show vlan Default
+show ports 1,3 information</pre>
+
+    <h3>DHCP + DNS Supplemental CLI for UZTNA_10 — drafted, NOT yet pushed</h3>
+    <pre>configure vlan UZTNA_10 dhcp-address-range 10.10.10.10 - 10.10.10.254
+configure vlan UZTNA_10 dhcp-options default-gateway 10.10.10.1
+configure vlan UZTNA_10 dhcp-options dns-server primary 8.8.8.8
+configure vlan UZTNA_10 dhcp-options dns-server secondary 1.1.1.1
+configure vlan UZTNA_10 dhcp-lease-timer 86400
+enable dhcp ports 3 vlan UZTNA_10   # NOT idempotent — manual one-time only, never in template</pre>
+
+    <h3>Extend UZTNA_10 to the AP port — drafted, NOT yet pushed</h3>
+    <pre>configure vlan UZTNA_10 add ports 3 tagged</pre>
+
+    <div class="box">
+      <strong>Reminder — Idempotency</strong>
+      <code>enable dhcp ports 3 vlan UZTNA_10</code> and <code>enable ipforwarding vlan Default</code> both error on re-run. Keep them out of any Supplemental CLI template — run manually, once, over SSH.
+    </div>
+  </section>
+
+  <!-- PENDING -->
+  <section id="pending">
+    <p class="section-label">Pending</p>
+    <h2>Resume Tomorrow Morning</h2>
+
+    <ol>
+      <li><strong>Fill in SSID Name / Broadcast Name</strong> on <code>AP_EXOS_Aug27_UZTNA</code> — still blank.</li>
+      <li><strong>Check AP3000's IQ Engine firmware version</strong> before finalizing WPA2 vs WPA3-802.1X and Direct Tunnel vs Legacy Proxy — mismatch causes EP1 to silently withhold the SSID.</li>
+      <li><strong>Deploy Wireless step only</strong> — skip Switching/Routing in the policy wizard. Don't touch the working port 1 / port 3 Default VLAN config.</li>
+      <li><strong>Watch CAPWAP for the full 15 minutes</strong> after this heavier policy push (802.1X + CWP + UZTNA is a lot more surface area than the plain-SSID test).</li>
+      <li><strong>Decide on the 8 legacy/template profile rows</strong> (Team USA/AUS/VIP/Guest/POS + Test_UZTNA entries) — keep as-is for the exercise, or clean up to just one profile.</li>
+      <li><strong>When ready to bring VLAN10 live:</strong> tag UZTNA_10 on port 3, push the DHCP Supplemental CLI above, and add a static route on the home router (<code>10.10.10.0/24 → 5320's Default VLAN IP</code>) for return traffic.</li>
+      <li><strong>Confirm Platform ONE Security / Universal ZTNA subscription entitlement</strong> on the EP1 tenant — native cloud PKI is documented as an additional-subscription feature; not yet confirmed present.</li>
+    </ol>
+  </section>
+
+</div>
+
+<footer>
+  <p>© 2026 Khursheed Khan &nbsp;·&nbsp; Extreme Networks Home Lab &nbsp;·&nbsp; Session 2026-08-27</p>
+</footer>
+
+</body>
+</html>
