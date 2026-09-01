@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Session Summary — 31 August 2026</title>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Libre Baskerville', Georgia, serif;
+      background: #fff;
+      color: #1a1a1a;
+      font-size: 17px;
+      line-height: 1.75;
+    }
+
+    header {
+      border-top: 4px solid #1a1a1a;
+      border-bottom: 1px solid #ccc;
+      padding: 2rem 0 1.2rem;
+      text-align: center;
+      margin-bottom: 0;
+    }
+    header .kicker {
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #555;
+      margin-bottom: 0.5rem;
+    }
+    header h1 {
+      font-size: 2.3rem;
+      font-weight: 700;
+      line-height: 1.2;
+      max-width: 820px;
+      margin: 0 auto 0.6rem;
+    }
+    header .subtitle {
+      font-style: italic;
+      color: #444;
+      font-size: 1rem;
+      max-width: 680px;
+      margin: 0.4rem auto 0.8rem;
+      line-height: 1.7;
+    }
+    header .byline {
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 0.85rem;
+      color: #555;
+    }
+    header .byline span { color: #1a1a1a; font-weight: 600; }
+
+    .container {
+      max-width: 880px;
+      margin: 0 auto;
+      padding: 0 1.5rem 4rem;
+    }
+
+    nav#toc {
+      position: sticky;
+      top: 0;
+      background: #fff;
+      border-bottom: 1px solid #ddd;
+      padding: 0.6rem 0;
+      z-index: 100;
+      margin-bottom: 2.5rem;
+    }
+    nav#toc ul {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3rem 1.2rem;
+      list-style: none;
+      justify-content: center;
+    }
+    nav#toc a {
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: #1a1a1a;
+      text-decoration: none;
+      padding: 0.2rem 0;
+      border-bottom: 2px solid transparent;
+      transition: border-color 0.15s;
+    }
+    nav#toc a:hover { border-color: #326891; color: #326891; }
+
+    section { margin-bottom: 3rem; }
+
+    .section-label {
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: #326891;
+      border-bottom: 2px solid #326891;
+      padding-bottom: 4px;
+      margin-bottom: 1.2rem;
+    }
+
+    h2 {
+      font-size: 1.55rem;
+      font-weight: 700;
+      margin-bottom: 0.8rem;
+      margin-top: 0.2rem;
+    }
+
+    h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin: 1.4rem 0 0.5rem;
+    }
+
+    p { margin-bottom: 1rem; }
+    p:last-child { margin-bottom: 0; }
+
+    ul, ol { padding-left: 1.4rem; margin-bottom: 1rem; }
+    li { margin-bottom: 0.4rem; }
+
+    .box {
+      border-left: 4px solid #326891;
+      background: #f0f6fb;
+      padding: 0.9rem 1.1rem;
+      margin: 1.2rem 0;
+      border-radius: 0 4px 4px 0;
+    }
+    .box.warn {
+      border-color: #c87d00;
+      background: #fffbf0;
+    }
+    .box.ok {
+      border-color: #2e7d32;
+      background: #f1faf1;
+    }
+    .box.blocked {
+      border-color: #b71c1c;
+      background: #fdf3f3;
+    }
+    .box strong {
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 0.35rem;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 1rem;
+      margin: 1.5rem 0 2rem;
+    }
+    .stat-card {
+      text-align: center;
+      border: 1px solid #e2e2e2;
+      padding: 1rem 0.5rem;
+      border-radius: 4px;
+    }
+    .stat-num {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #326891;
+      line-height: 1;
+      margin-bottom: 0.3rem;
+    }
+    .stat-label {
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #666;
+    }
+
+    code, pre {
+      font-family: 'Courier New', monospace;
+      font-size: 0.88rem;
+    }
+    pre {
+      background: #f5f5f5;
+      border: 1px solid #e0e0e0;
+      padding: 1rem 1.2rem;
+      border-radius: 4px;
+      overflow-x: auto;
+      margin: 1rem 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+      margin: 1rem 0;
+    }
+    th {
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      background: #f5f5f5;
+      border: 1px solid #ddd;
+      padding: 0.5rem 0.8rem;
+      text-align: left;
+    }
+    td {
+      border: 1px solid #ddd;
+      padding: 0.5rem 0.8rem;
+      vertical-align: top;
+    }
+    tr:nth-child(even) td { background: #fafafa; }
+
+    .status-ok   { color: #2e7d32; font-weight: 700; }
+    .status-fail { color: #b71c1c; font-weight: 700; }
+    .status-warn { color: #c87d00; font-weight: 700; }
+
+    footer {
+      border-top: 1px solid #ccc;
+      padding-top: 1.5rem;
+      margin-top: 4rem;
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 0.8rem;
+      color: #777;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <p class="kicker">Lab Session Journal &nbsp;·&nbsp; Extreme Networks Home Lab</p>
+  <h1>IP Forwarding Confirmed on 5320_MyLab; AP Uplink Trunk Misconfig Found in EP1</h1>
+  <p class="subtitle">A <code>show config</code> grep miss on the switch turned out to be a display quirk, not a real problem — IP forwarding was already enabled. The actual root cause of the session's connectivity confusion was on the AP side: its ETH0 uplink was set to Trunk in the device-level EP1 setting. Corrected and resolved.</p>
+  <p class="byline">By <span>Khursheed Khan</span> &nbsp;·&nbsp; 31 August 2026</p>
+</header>
+
+<div class="container">
+
+  <nav id="toc">
+    <ul>
+      <li><a href="#accomplished">Accomplished</a></li>
+      <li><a href="#investigation">IP Forwarding Investigation</a></li>
+      <li><a href="#rootcause">Root Cause — AP ETH0 Uplink</a></li>
+      <li><a href="#commands">Commands</a></li>
+      <li><a href="#pending">Next Up</a></li>
+    </ul>
+  </nav>
+
+  <!-- ACCOMPLISHED -->
+  <section id="accomplished">
+    <p class="section-label">Accomplished</p>
+    <h2>What Got Done</h2>
+
+    <div class="stats">
+      <div class="stat-card"><div class="stat-num">1</div><div class="stat-label">Display Quirk Ruled Out</div></div>
+      <div class="stat-card"><div class="stat-num">1</div><div class="stat-label">Real Root Cause Found</div></div>
+      <div class="stat-card"><div class="stat-num">2</div><div class="stat-label">Devices Checked (Switch + AP)</div></div>
+    </div>
+
+    <ul>
+      <li><strong>IP forwarding verified live</strong> on 5320-16P-2MXT-2X-SwitchEngine — <code>show ipconfig vlan Default</code> and <code>show vlan Default</code> both confirm forwarding is enabled and working, even though <code>show config | i ipforwarding</code> didn't surface a matching line.</li>
+      <li><strong>Actual root cause identified on the AP</strong>, not the switch — the AP's ETH0 uplink port mode was set to Trunk in the device-level EP1 setting. Correcting it to the intended mode resolved the underlying connectivity problem that prompted this session's troubleshooting.</li>
+    </ul>
+  </section>
+
+  <!-- INVESTIGATION -->
+  <section id="investigation">
+    <p class="section-label">Investigation</p>
+    <h2>"show config | i ipforwarding" Showed Nothing — False Alarm</h2>
+
+    <p>Ran <code>enable ipforwarding vlan Default</code> on the switch, then checked for it with <code>show config | i ipforwarding</code>. No match. Rather than guess at why, verified against live runtime state instead of the config-diff view:</p>
+
+    <h3><code>show ipconfig vlan Default</code></h3>
+    <pre>Router Interface on Default is enabled and up.
+    inet 192.168.0.28/24  broadcast 192.168.0.255  Mtu 1500
+
+    Flags:
+        BOOTP Host  NO   DirBcstHwFwd  NO          Fwd Bcast  NO    IgnoreBcast YES
+         IP Fwding YES       IPmc Fwd  NO   Multinetted VLAN  NO    IRDP Advert  NO
+        Send Redir YES           VRRP  NO TCP Adjust MSS OFF</pre>
+
+    <h3><code>show vlan Default</code></h3>
+    <pre>IPv4 Forwarding:     Enabled
+IPv4 MC Forwarding:  Disabled
+Primary IP:          192.168.0.28/24</pre>
+
+    <div class="box ok">
+      <strong>Conclusion</strong>
+      IP forwarding was enabled and functioning the whole time. The grep miss against <code>show config</code> is a display-format quirk on this EXOS build — not evidence the command failed. Runtime state (<code>show ipconfig</code> / <code>show vlan</code>) is the authoritative check, not a filtered config dump.
+    </div>
+  </section>
+
+  <!-- ROOT CAUSE -->
+  <section id="rootcause">
+    <p class="section-label">Root Cause</p>
+    <h2>The Real Problem Was on the AP — ETH0 Uplink Set to Trunk in EP1</h2>
+
+    <p>With the switch cleared, the actual source of the session's connectivity confusion turned out to be the AP, not the 5320. The AP's ETH0 uplink port mode was set to <strong>Trunk</strong> in the device-level setting inside EP1. Correcting the uplink mode resolved the issue.</p>
+
+    <div class="box blocked">
+      <strong>Lesson</strong>
+      A switch-side investigation (grep misses, config visibility) can be a red herring when the real misconfiguration lives one layer up, on the AP's own device-level EP1 setting. Don't assume the switch is the source of the problem just because that's where symptoms first showed up — check the AP's EP1 device-level uplink port mode (Access vs Trunk) early in the sequence.
+    </div>
+  </section>
+
+  <!-- COMMANDS -->
+  <section id="commands">
+    <p class="section-label">Commands</p>
+    <h2>Verified This Session</h2>
+
+    <pre>enable ipforwarding vlan Default
+show config | i ipforwarding      # no match — display quirk, not a failure
+show ipconfig vlan Default        # authoritative — IP Fwding YES
+show vlan Default                 # authoritative — IPv4 Forwarding: Enabled</pre>
+  </section>
+
+  <!-- NEXT -->
+  <section id="pending">
+    <p class="section-label">Next Up</p>
+    <h2>Additional Work Beginning This Session</h2>
+    <p>IP forwarding and the AP uplink mode are both confirmed correct. Session continues into new work from here.</p>
+  </section>
+
+</div>
+
+<footer>
+  <p>© 2026 Khursheed Khan &nbsp;·&nbsp; Extreme Networks Home Lab &nbsp;·&nbsp; Session 2026-08-31</p>
+</footer>
+
+</body>
+</html>
