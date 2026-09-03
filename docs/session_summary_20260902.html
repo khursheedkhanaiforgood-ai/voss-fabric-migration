@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Session Summary — 2 September 2026</title>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Libre Baskerville', Georgia, serif;
+      background: #fff;
+      color: #1a1a1a;
+      font-size: 17px;
+      line-height: 1.75;
+    }
+
+    header {
+      border-top: 4px solid #1a1a1a;
+      border-bottom: 1px solid #ccc;
+      padding: 2rem 0 1.2rem;
+      text-align: center;
+      margin-bottom: 0;
+    }
+    header .kicker {
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #555;
+      margin-bottom: 0.5rem;
+    }
+    header h1 {
+      font-size: 2.3rem;
+      font-weight: 700;
+      line-height: 1.2;
+      max-width: 820px;
+      margin: 0 auto 0.6rem;
+    }
+    header .subtitle {
+      font-style: italic;
+      color: #444;
+      font-size: 1rem;
+      max-width: 680px;
+      margin: 0.4rem auto 0.8rem;
+      line-height: 1.7;
+    }
+    header .byline {
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 0.85rem;
+      color: #555;
+    }
+    header .byline span { color: #1a1a1a; font-weight: 600; }
+
+    .container {
+      max-width: 880px;
+      margin: 0 auto;
+      padding: 0 1.5rem 4rem;
+    }
+
+    nav#toc {
+      position: sticky;
+      top: 0;
+      background: #fff;
+      border-bottom: 1px solid #ddd;
+      padding: 0.6rem 0;
+      z-index: 100;
+      margin-bottom: 2.5rem;
+    }
+    nav#toc ul {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3rem 1.2rem;
+      list-style: none;
+      justify-content: center;
+    }
+    nav#toc a {
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: #1a1a1a;
+      text-decoration: none;
+      padding: 0.2rem 0;
+      border-bottom: 2px solid transparent;
+      transition: border-color 0.15s;
+    }
+    nav#toc a:hover { border-color: #326891; color: #326891; }
+
+    section { margin-bottom: 3rem; }
+
+    .section-label {
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: #326891;
+      border-bottom: 2px solid #326891;
+      padding-bottom: 4px;
+      margin-bottom: 1.2rem;
+    }
+
+    h2 {
+      font-size: 1.55rem;
+      font-weight: 700;
+      margin-bottom: 0.8rem;
+      margin-top: 0.2rem;
+    }
+
+    h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin: 1.4rem 0 0.5rem;
+    }
+
+    p { margin-bottom: 1rem; }
+    p:last-child { margin-bottom: 0; }
+
+    ul, ol { padding-left: 1.4rem; margin-bottom: 1rem; }
+    li { margin-bottom: 0.4rem; }
+
+    .box {
+      border-left: 4px solid #326891;
+      background: #f0f6fb;
+      padding: 0.9rem 1.1rem;
+      margin: 1.2rem 0;
+      border-radius: 0 4px 4px 0;
+    }
+    .box.warn {
+      border-color: #c87d00;
+      background: #fffbf0;
+    }
+    .box.ok {
+      border-color: #2e7d32;
+      background: #f1faf1;
+    }
+    .box.blocked {
+      border-color: #b71c1c;
+      background: #fdf3f3;
+    }
+    .box strong {
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 0.35rem;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 1rem;
+      margin: 1.5rem 0 2rem;
+    }
+    .stat-card {
+      text-align: center;
+      border: 1px solid #e2e2e2;
+      padding: 1rem 0.5rem;
+      border-radius: 4px;
+    }
+    .stat-num {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #326891;
+      line-height: 1;
+      margin-bottom: 0.3rem;
+    }
+    .stat-label {
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #666;
+    }
+
+    code, pre {
+      font-family: 'Courier New', monospace;
+      font-size: 0.88rem;
+    }
+    pre {
+      background: #f5f5f5;
+      border: 1px solid #e0e0e0;
+      padding: 1rem 1.2rem;
+      border-radius: 4px;
+      overflow-x: auto;
+      margin: 1rem 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+      margin: 1rem 0;
+    }
+    th {
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      background: #f5f5f5;
+      border: 1px solid #ddd;
+      padding: 0.5rem 0.8rem;
+      text-align: left;
+    }
+    td {
+      border: 1px solid #ddd;
+      padding: 0.5rem 0.8rem;
+      vertical-align: top;
+    }
+    tr:nth-child(even) td { background: #fafafa; }
+
+    .status-ok   { color: #2e7d32; font-weight: 700; }
+    .status-fail { color: #b71c1c; font-weight: 700; }
+    .status-warn { color: #c87d00; font-weight: 700; }
+
+    footer {
+      border-top: 1px solid #ccc;
+      padding-top: 1.5rem;
+      margin-top: 4rem;
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 0.8rem;
+      color: #777;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <p class="kicker">Lab Session Journal &nbsp;·&nbsp; Extreme Networks Home Lab</p>
+  <h1>3-in-1 Fabric Demo Confirmed Live on KhKLab-SW-01 — FE, NNI, and Fabric Attach All Running Simultaneously</h1>
+  <p class="subtitle">A day that started as a management-plane concept study (EP1 vs. Site Engine for fabric orchestration) turned into a full hands-on session: Fabric Extend over SD-WAN, a direct NNI to SW2, and Fabric Attach to two AP3000s were all captured working at once on the same box. One I-SID mismatch and one AP link-down are the open threads carrying into next session.</p>
+  <p class="byline">By <span>Khursheed Khan</span> &nbsp;·&nbsp; 2 September 2026</p>
+</header>
+
+<div class="container">
+
+  <nav id="toc">
+    <ul>
+      <li><a href="#accomplished">Accomplished</a></li>
+      <li><a href="#ep1-vs-se">EP1 vs Site Engine</a></li>
+      <li><a href="#hospital">Hospital Scenario</a></li>
+      <li><a href="#rs1">RS1 Cutover</a></li>
+      <li><a href="#terminology">Terminology + PPSK Fact-Check</a></li>
+      <li><a href="#livedemo">Live 3-in-1 Demo</a></li>
+      <li><a href="#open">Open Issues</a></li>
+      <li><a href="#pending">Next Up</a></li>
+    </ul>
+  </nav>
+
+  <!-- ACCOMPLISHED -->
+  <section id="accomplished">
+    <p class="section-label">Accomplished</p>
+    <h2>What Got Done</h2>
+
+    <div class="stats">
+      <div class="stat-card"><div class="stat-num">3</div><div class="stat-label">Fabric Mechanisms Live at Once (FE / NNI / FA)</div></div>
+      <div class="stat-card"><div class="stat-num">5</div><div class="stat-label">Systems Visible in ISIS LSDB</div></div>
+      <div class="stat-card"><div class="stat-num">2</div><div class="stat-label">Open Issues Carried Forward</div></div>
+    </div>
+
+    <ul>
+      <li><strong>Concept study resumed and resolved</strong> on whether EP1 or Site Engine owns fabric orchestration (BCB/BEB, I-SID/VSN provisioning) — KB-confirmed Site Engine has the documented provisioning depth today; EP1 is visualization + AI-ops layered on top, with three supported deployment modes (Site Engine only, EP1 only, or connected).</li>
+      <li><strong>Hospital hub-and-spoke narrative fact-checked</strong> against KB — Fabric Extend reference architecture is a Site Engine capability, dedicated-circuit WANs drop the IPsec Gateway hardware requirement entirely, opening the door to any Fabric Connect-capable switch (including the 5320) at spoke sites.</li>
+      <li><strong>RS1 single-remote-site cutover mechanics confirmed</strong> — Cisco core needs only a plain VLAN-matched trunk, no fabric-aware config; BVLAN/IS-IS/I-SID bindings are valid to configure even with zero NNI neighbors; KB confirms no universal rule that core must be replaced first.</li>
+      <li><strong>Terminology corrected</strong>: IQEngine = AP firmware persona, IQController/XIQ-C = separate on-prem controller product — not interchangeable. Fact-checked a pasted third-party AI transcript on PPSK/I-SID mapping — the Fabric Attach I-SID field is real and documented, but the specific "PPSK User Group → I-SID" binding claimed was <strong>not</strong> confirmed in KB.</li>
+      <li><strong>Live hardware session</strong>: full 3-mechanism demo (Fabric Extend over SD-WAN, direct NNI to SW2, Fabric Attach to two AP3000s) captured working simultaneously on KhKLab-SW-01, with root-cause diagnosis and fix for an FA AutoConfig-disabled state along the way.</li>
+    </ul>
+  </section>
+
+  <!-- EP1 VS SITE ENGINE -->
+  <section id="ep1-vs-se">
+    <p class="section-label">Concept Study</p>
+    <h2>EP1 vs. Site Engine for Fabric Orchestration</h2>
+
+    <p>Resumed the paused Fabric Extend thread via a new angle — the management plane, not tunnel CLI. Scenario: SD-WAN/IPE connects to a VOSS switch acting as a BEB inside a colleague's network, managed by Site Engine.</p>
+
+    <ul>
+      <li><strong>Site Engine has the documented native depth</strong> — persona switch (Switch Engine → Fabric Engine OS), topology config, L2VSN/L3VSN + I-SID config, DVR + redundancy (VRRP/RSMLT/DVR), port templates, and visualization of IS-IS areas / Fabric Connect links / service location. No KB source shows a dedicated EP1 BCB/BEB or I-SID/VSN provisioning workflow — EP1's fabric story today is visualization + AI-assisted workflows on top of Fabric Connect's built-in automation.</li>
+      <li><strong>No requirement to run both</strong> — three supported modes: Site Engine only (air-gapped, license-proxy option), EP1 only (cloud/SaaS), or connected mode for phased migration. Switching air-gapped ↔ connected is a few clicks, no hardware or subscription change.</li>
+      <li><strong>New FE addressing detail</strong>: SD-WAN allocates a /29 subnet per site from the Fabric Extend IP network, and IPEs use LLDP to hand fabric switches their IP/gateway + destination IPs to auto-build the VXLAN tunnels — FE tunnel addressing is SD-WAN-automated, not manually configured on the switch in this model.</li>
+    </ul>
+
+    <div class="box warn">
+      <strong>Open, Unconfirmed</strong>
+      Exactly how Site Engine reaches a remote BEB switch's management IP behind SD-WAN/IPE — in-band over the same FE tunnel, or a separate OOB path — is not stated explicitly in any retrieved KB source. Flagged for a docs/GTAC follow-up, not guessed at.
+    </div>
+
+    <div class="box ok">
+      <strong>Status</strong>
+      Concept/mental-model study only — no hardware touched, no build requested. Continue only when asked.
+    </div>
+  </section>
+
+  <!-- HOSPITAL SCENARIO -->
+  <section id="hospital">
+    <p class="section-label">Hypothetical / Consulting Narrative</p>
+    <h2>EP1-Only Cisco→Fabric Hub-and-Spoke Hospital Migration</h2>
+
+    <p>A client-facing narrative, not lab hardware: HQ + many remote sites, migrating from Cisco, EP1-only (no Site Engine), CLI builds core + BEB, EP1 takes over ongoing management.</p>
+
+    <ul>
+      <li>Extreme's own hub-and-spoke Fabric Extend reference architecture is built around Site Engine / "Fabric Extend Manager," not EP1 — going EP1-only likely means CLI also carries the FE tunnel build, not just BCB/BEB/VSN config.</li>
+      <li><strong>Confirmed this session:</strong> the hospital has dedicated circuits (MPLS/leased line) to every remote site. On a private WAN, VXLAN-only Fabric Extend is fully sufficient — <strong>IPsec is not required</strong>, so the pricier Fabric IPsec Gateway appliance drops out of the design entirely. Any Fabric Connect-capable switch (5320/5420/5720/7520/7720 family) can serve as the branch-side tunnel endpoint directly.</li>
+      <li>Cisco migration can be phased — EP1 + Third-Party Management Engine (TPME) can manage existing Cisco gear centrally alongside the new fabric during transition.</li>
+      <li>Healthcare proof points available as case-study backup: Concord Hospital (zero-downtime bridged cutover), CHU Besançon (security + continuity), ZOL (schedule confidence, segmentation). SPB fabric failover is sub-200ms — relevant for life-safety system reconvergence tolerance.</li>
+    </ul>
+
+    <div class="box">
+      <strong>Status</strong>
+      Scoped as a hypothetical/consulting narrative only. No CLI executed, no hardware project created.
+    </div>
+  </section>
+
+  <!-- RS1 -->
+  <section id="rs1">
+    <p class="section-label">Migration Mechanics</p>
+    <h2>RS1 Single-Remote-Site Cutover + Sequencing</h2>
+
+    <p>Scenario: cut over one BEB at RemoteSite1 plus new EN APs, no NNI at that site yet, uplink runs to dedicated WAN or internet back to a Cisco Core at HQ.</p>
+
+    <ul>
+      <li><strong>Cisco-side config is ordinary, not fabric-aware</strong> — KB confirms the third-party core "does not participate in Fabric or Fabric Attach signaling," needs only a conventional 802.1Q trunk (or routed peer) with matching VLAN IDs, same as bringing up any new vendor switch.</li>
+      <li><strong>Two separate things on the RS1 box</strong>: (1) SPB/IS-IS/BVLAN + I-SID-to-port bindings — valid to configure even with zero NNI neighbors, dormant until a peer exists; (2) the WAN-facing uplink to Cisco HQ — a plain UNI/legacy-edge VLAN-tagged port, unrelated to the BVLAN/IS-IS config.</li>
+      <li><strong>No universal sequencing rule</strong> — KB validates both edge-first (replace one switch with legacy uplinks, then chain outward) and parallel-core (build the new fabric core alongside the existing one, migrate access/gateways gradually) patterns. Recommendation: treat RS1 legacy-edge cutover and the EN_Fabric_Core lab POC as parallel, non-blocking tracks.</li>
+    </ul>
+  </section>
+
+  <!-- TERMINOLOGY -->
+  <section id="terminology">
+    <p class="section-label">Fact-Check</p>
+    <h2>IQController vs. IQEngine, and a PPSK/I-SID Claim Under Scrutiny</h2>
+
+    <ul>
+      <li><strong>IQEngine</strong> = the AP operating system/firmware persona (formerly HiveOS), not a management platform.</li>
+      <li><strong>IQController / XIQ-C</strong> = a separate, centralized on-prem controller platform (airgap licensing, tunneling, integrates with Site Engine/ExtremeControl/ExtremeAnalytics/AirDefense) — a different product line from cloud-managed EP1/XIQ entirely.</li>
+    </ul>
+
+    <p>Fact-checked a pasted third-party AI transcript on hospital single-SSID medical-IoT segmentation via PPSK, where the user had already caught two of three claimed EP1 workflow steps as non-existent:</p>
+
+    <div class="box ok">
+      <strong>Confirmed real</strong>
+      "The Fabric Attach topology type is similar to B@AP with the added I-SID parameter" and the I-SID field itself (range 0–15999999) — documented in the ExtremeCloud IQ Controller User Guide and present in EP1/XIQ-New's VLAN+I-SID workflow.
+    </div>
+
+    <div class="box warn">
+      <strong>Not confirmed</strong>
+      The transcript's claim of an end-to-end "PPSK User Group → I-SID" binding procedure. KB confirms PPSK user groups exist at the SSID level and confirms VLAN/topology assignment flows through a configuration Profile — but no KB excerpt shows PPSK groups wiring directly to I-SIDs. Not treated as confirmed.
+    </div>
+
+    <p>User's own live IQEngine VLAN-I-SID mapping issue was mentioned but not yet detailed — no error text, command output, or device identified. Needs specifics before it can be diagnosed.</p>
+  </section>
+
+  <!-- LIVE DEMO -->
+  <section id="livedemo">
+    <p class="section-label">Live Hardware Session</p>
+    <h2>KhKLab-SW-01 — FE / NNI / Fabric Attach, All Three Live at Once</h2>
+
+    <p>Topology confirmed live: port 1/1 → SD-WAN appliance → RDU-Core (FishBowl-Fabric_Core-5720-01); port 1/10 → direct NNI → SW2 (5320-16P-2MXT-2X-FabricEngine); ports 1/3 and 1/7 → AP3000s.</p>
+
+    <h3>Fabric Attach Qualification</h3>
+    <p>Neither the SD-WAN/FE link (1/1) nor the SW1↔SW2 NNI (1/10) is Fabric Attach — both are genuine Fabric NNI / SPBM IS-IS adjacencies between fabric-native devices. FA only qualifies on the AP-facing ports, 1/3 and 1/7.</p>
+
+    <h3>Root-Cause Diagnosis: AP3000 Not Getting Proper FA Mapping</h3>
+    <ol>
+      <li><code>show fa elements</code> initially showed STATE <code>T / D</code> (Tagged / AutoConfig Disabled) on both 1/3 and 1/7, despite successful discovery + auth.</li>
+      <li>Fix applied: <code>fa port-enable 1/7</code> and <code>fa port-enable 1/3</code>. Confirmed via <code>show fa interface port X</code> — SERVER STATUS flipped to <code>enabled</code>.</li>
+      <li>Real confirmation: <code>show fa assignment</code> showed both ports with active, client-origin I-SID assignments — FA mechanically working end-to-end (discovery → auth → auto-provision).</li>
+    </ol>
+
+    <h3>Commands That Proved the 3-in-1 Demo</h3>
+    <pre>show interfaces gigabitethernet auto-sense 1/1-1/10
+  # 1/1 = SD-WAN, 1/10 = NNI-ISIS-UP, 1/3 = FA, 1/7 = FA
+
+show isis adjacencies
+  # SD-WAN-1 -> FishBowl-Fabric_Core-5720-01 (Fabric Extend, uptime 05:46:06)
+  # Port1/10 -> SW2 (plain NNI, uptime 00:55:16)
+
+show isis lsdb
+  # 14 LSP entries across 5 systems in HOME area:
+  # TSLab-SW-01, SW2, KhKLab-SW-01, FishBowl-Fabric_Core-5720-01, Fishbowl-SW-01
+
+show isis spbm
+  # SMLT-SPLIT-BEB: primary, all-zero virtual B-MAC, no peer system ID
+  # (default/inactive SMLT state — unrelated to this demo, not a concern)</pre>
+
+    <div class="box ok">
+      <strong>Result</strong>
+      Fabric Extend, a plain fabric NNI, and Fabric Attach were all captured live and working simultaneously on one switch — the cleanest single-session proof yet that FE and a local NNI are both just IS-IS adjacencies to the fabric, with FA layered on top for non-SPB-capable edge devices.
+    </div>
+  </section>
+
+  <!-- OPEN ISSUES -->
+  <section id="open">
+    <p class="section-label">Open Issues</p>
+    <h2>Two Threads Carrying Into Next Session</h2>
+
+    <div class="box warn">
+      <strong>1. I-SID Mismatch Across FA Ports</strong>
+      <code>show fa assignment</code> shows 1/3 → I-SID 143154 (VLAN 154, generic name <code>ISID-143154</code>) vs 1/7 → I-SID 144154 (VLAN 154, named <code>BOBKit-4-WirelessUser-isid</code>). Same VLAN tag, two different I-SIDs — since I-SID is the actual fabric isolation boundary, these two APs are landing in separate, non-communicating VSNs despite sharing a VLAN number. Likely cause (inference, not KB-confirmed): the two APs are bound to two different EP1 Network Policies/VLAN Profiles, each independently specifying its own Fabric-Attach I-SID for "VLAN 154." <strong>Waiting on confirmation</strong> of intent — shared single VSN for roaming vs. deliberate per-AP isolation — before prescribing an EP1-side fix.
+    </div>
+
+    <div class="box blocked">
+      <strong>2. AP on Port 1/7 Went Down</strong>
+      Reported at session end — link/physical state, not the FA mapping issue above (that AP was FA-active moments earlier in this same session). No diagnostic commands run yet. Next step: <code>show interfaces gigabitethernet 1/7</code> (or equivalent port/link-state command) plus current <code>show fa elements</code> / <code>show fa interface port 1/7</code> to determine whether this is a physical link-down, a PoE issue, or an FA state regression.
+    </div>
+  </section>
+
+  <!-- NEXT -->
+  <section id="pending">
+    <p class="section-label">Next Up</p>
+    <h2>Paused Here — Resuming for a Demo Build</h2>
+    <p>Session paused mid-diagnosis on the AP 1/7 link-down to shift toward demo-prep work. Both open issues above are the entry point when hardware work resumes.</p>
+  </section>
+
+</div>
+
+<footer>
+  <p>© 2026 Khursheed Khan &nbsp;·&nbsp; Extreme Networks Home Lab &nbsp;·&nbsp; Session 2026-09-02</p>
+</footer>
+
+</body>
+</html>
